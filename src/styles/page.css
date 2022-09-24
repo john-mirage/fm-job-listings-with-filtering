@@ -1,10 +1,10 @@
 .page {
   background-image:
     url("/src/images/bg-header-mobile.svg"),
-    linear-gradient(to bottom, var(--color-desaturated-dark-cyan) 15.6rem, var(--color-light-grayish-cyan-bg) 15.6rem);
+    linear-gradient(to bottom, var(--color-desaturated-dark-cyan) 9.75rem, var(--color-light-grayish-cyan-bg) 9.75rem);
   background-repeat: no-repeat;
   background-position: top;
-  background-size: auto 15.6rem, cover;
+  background-size: auto 9.75rem, cover;
 }
 
 .page__icons {
@@ -15,6 +15,6 @@
   .page {
     background-image:
       url("/src/images/bg-header-desktop.svg"),
-      linear-gradient(to bottom, var(--color-desaturated-dark-cyan) 15.6rem, var(--color-light-grayish-cyan-bg) 15.6rem);
+      linear-gradient(to bottom, var(--color-desaturated-dark-cyan) 9.75rem, var(--color-light-grayish-cyan-bg) 9.75rem);
   }
 }

@@ -1,9 +1,20 @@
+import jobTagList from "@components/job-tag-list";
+import classes from "./component.module.css";
+
 class JobCard extends HTMLElement {
+  [key: string]: any;
   #initialMount = true;
   #job?: AppData.Job;
+  #listItemElement = document.createElement("li");
+  #logoElement = document.createElement("img");
+  #jobTagListElement = <jobTagList>document.createElement("job-tag-list");
 
   constructor() {
     super();
+    this.#listItemElement.classList.add(classes["jobCard__listItem"]);
+    this.#logoElement.classList.add(classes["jobCard__logo"]);
+    this.#logoElement.setAttribute("draggable", "false");
+    this.#listItemElement.append(this.#logoElement, this.#jobTagListElement);
   }
 
   get job(): AppData.Job | undefined {
@@ -12,38 +23,37 @@ class JobCard extends HTMLElement {
 
   set job(newJob: AppData.Job | undefined) {
     this.#job = newJob;
+    if (this.#job) {
+      this.#logoElement.setAttribute("src", this.#job.logo);
+      this.#logoElement.setAttribute("alt", `${this.#job.company} logo`);
+      this.#jobTagListElement.jobTags = [
+        this.#job.role,
+        this.#job.level,
+        ...this.#job.languages,
+        ...this.#job.tools
+      ];
+    } else {
+      this.#logoElement.removeAttribute("src");
+      this.#logoElement.removeAttribute("alt");
+      this.#jobTagListElement.jobTags = undefined;
+    }
   }
 
   connectedCallback() {
     if (this.#initialMount) {
-      this.classList.add("card");
+      this.classList.add(classes["jobCard"]);
+      this.append(this.#listItemElement);
       this.#initialMount = false;
     }
+    this.upgradeProperty("job");
   }
 
-  disconnectedCallback() {
-
-  }
-
-  handleTag(event: Event) {
-    const filter = (<HTMLButtonElement>event.currentTarget).dataset.name;
-    const customEvent = new CustomEvent("add-job-filter", { detail: { filter }, bubbles: true });
-    this.dispatchEvent(customEvent);
-  }
-
-  createBadge(name: string) {
-    const badgeElement = document.createElement("button");
-    badgeElement.classList.add("card__badge", `card__badge--${name}`);
-    badgeElement.textContent = name === "new" ? "new!" : name;
-    return badgeElement;
-  }
-
-  createTag(name: string) {
-    const tagElement = document.createElement("button");
-    tagElement.classList.add("card__tag");
-    tagElement.textContent = name;
-    tagElement.dataset.name = name;
-    return tagElement;
+  upgradeProperty(prop: string) {
+    if (this.hasOwnProperty(prop)) {
+      let value = this[prop];
+      delete this[prop];
+      this[prop] = value;
+    }
   }
 }
 
