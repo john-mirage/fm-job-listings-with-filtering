@@ -40,6 +40,7 @@ class JobCard extends HTMLLIElement {
       this.#companyElement.textContent = this.#job.company;
       this.#positionElement.textContent = this.#job.position;
       this.#infoElement.textContent = `${this.#job.postedAt}  .  ${this.#job.contract}  .  ${this.#job.location}`;
+      if (this.#job.featured) this.classList.add(classes["jobCard--featured"]);
       if (this.#job.featured || this.#job.new) {
         let jobBadges = [];
         if (this.#job.new) jobBadges.push("new!");
