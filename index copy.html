@@ -45,17 +45,38 @@
 
     <!-- Template | card -->
     <template id="template-card">
-      <article data-name="article">
-        
-      </article>
+      <div class="card__section card__section--logo">
+        <img class="card__logo" data-name="logo" src="" alt="">
+      </div>
+      <div class="card__section card__section--info">
+        <div class="card__row" data-name="badges">
+          <a class="card__link" href="#">
+            <p class="card__company" data-name="company"></p>
+          </a>
+        </div>
+        <div class="card__row">
+          <a class="card__link card__link--my" href="#">
+            <h2 class="card__position" data-name="position"></h2>
+          </a>
+        </div>
+        <div class="card__row">
+          <p class="card__text" data-name="posted-at"></p>
+          <div class="card__dot"></div>
+          <p class="card__text" data-name="contract"></p>
+          <div class="card__dot"></div>
+          <p class="card__text" data-name="location"></p>
+        </div>
+      </div>
+      <div class="card__divider"></div>
+      <div class="card__section card__section--tags" data-name="tags"></div>
     </template>
 
     <!-- Template | filter -->
     <template id="template-filter">
-      <p data-name="tag"></p>
-      <button data-name="button">
-        <svg data-name="icon" fill="currentColor">
-          <use href="#icon-delete"/>
+      <span class="filter__label" data-name="tag"></span>
+      <button class="filter__button" data-name="button">
+        <svg class="filter__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14">
+          <path fill="#FFF" fill-rule="evenodd" d="M11.314 0l2.121 2.121-4.596 4.596 4.596 4.597-2.121 2.121-4.597-4.596-4.596 4.596L0 11.314l4.596-4.597L0 2.121 2.121 0l4.596 4.596L11.314 0z"/>
         </svg>
       </button>
     </template>

@@ -1,25 +1,15 @@
-import Job from "@interfaces/job";
-import JobFilterListInterface from "@interfaces/job-filter-list";
-import JobCardListInterface from "@interfaces/job-card-list";
+import JobCardList from "@components/job-card-list";
+import JobFilterList from "@components/job-filter-list";
 
 class JobApp extends HTMLElement {
-  _jobList: Job[] | false;
-  _jobFilterList: string[] | false;
-  initialCall: boolean;
-  titleElement: HTMLHeadingElement;
-  jobCardListElement: JobCardListInterface;
-  jobFilterListElement: JobFilterListInterface;
+  #initialMount = true;
+  webCardList: JobCardList;
+  webFilterList: JobFilterList;
 
   constructor() {
     super();
-    this._jobList = false;
-    this._jobFilterList = false;
-    this.initialCall = true;
-    this.titleElement = document.createElement("h1");
-    this.titleElement.classList.add("page__title");
-    this.titleElement.textContent = "Job listings with filtering";
-    this.jobCardListElement = <JobCardListInterface>document.createElement("div", { is: "job-card-list" });
-    this.jobFilterListElement = <JobFilterListInterface>document.createElement("div", { is: "job-filter-list" });
+    this.webCardList = <JobCardList>document.createElement("div", { is: "job-card-list" });
+    this.webFilterList = <JobFilterList>document.createElement("div", { is: "job-filter-list" });
   }
 
   get jobList() {
@@ -50,10 +40,10 @@ class JobApp extends HTMLElement {
   }
 
   connectedCallback() {
-    if (this.initialCall) {
+    if (this.#initialMount) {
       this.classList.add("page__container");
       this.append(this.titleElement, this.jobCardListElement);
-      this.initialCall = false;
+      this.#initialMount = false;
     }
     this.addEventListener("add-job-filter", this.addJobFilter);
     this.addEventListener("delete-job-filter", this.deleteJobFilter);
