@@ -8,6 +8,7 @@
   height: 2rem; /* 32px */
   padding-left: 0.5rem; /* 8px */
   padding-right: 0.5rem; /* 8px */
+  padding-top: 0.25rem; /* 4px */
   border: none;
   border-radius: 0.25rem; /* 4px */
   background-color: var(--color-light-grayish-cyan-bg);
