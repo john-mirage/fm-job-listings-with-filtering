@@ -56,6 +56,7 @@ class JobApp extends HTMLElement {
     this.upgradeProperty("jobs");
     this.upgradeProperty("jobFilters");
     this.jobs = jobs;
+    this.jobFilters = [];
     this.addEventListener("add-job-filter", this.handleAddFilterEvent);
     this.addEventListener("delete-job-filter", this.handleDeleteFilterEvent);
     this.addEventListener("clear-job-filters", this.handleClearFiltersEvent);
@@ -76,22 +77,29 @@ class JobApp extends HTMLElement {
   }
 
   filterJobs() {
-    
+    this.#jobCardListElement.jobs = this.jobs.filter((job) => {
+      const tags = [job.role, job.level, ...job.languages, ...job.tools];
+      if (job.new) tags.push("new!");
+      if (job.featured) tags.push("featured");
+      return this.jobFilters.every((jobFilter) => tags.includes(jobFilter));
+    });
   }
 
   handleAddFilterEvent(event: Event) {
     const { filter } = (<CustomEvent>event).detail;
-    console.log("add" , filter, "filter");
     if (typeof filter === "string") {
-      if (!this.jobFilters.includes(filter)) this.jobFilters = [...this.jobFilters, filter];
+      if (!this.jobFilters.includes(filter)) {
+        this.jobFilters = [...this.jobFilters, filter];
+        this.filterJobs();
+      };
     }
   }
 
   handleDeleteFilterEvent(event: Event) {
     const { filter } = (<CustomEvent>event).detail;
-    console.log("delete", filter, "filter");
     if (typeof filter === "string") {
       this.jobFilters = this.jobFilters.filter((jobFilter) => jobFilter !== filter);
+      this.filterJobs();
     }
   }
 
