@@ -3,6 +3,7 @@ import classes from "./component.module.css";
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
 class JobFilter extends HTMLLIElement {
+  [key: string]: any;
   #initialMount = true;
   #jobFilter?: string;
   #buttonElement = document.createElement("button");
@@ -12,10 +13,13 @@ class JobFilter extends HTMLLIElement {
 
   constructor() {
     super();
+    this.#labelElement.classList.add(classes["jobFilter__label"]);
+    this.#buttonElement.classList.add(classes["jobFilter__button"]);
+    this.#iconElement.classList.add(classes["jobFilter__buttonIcon"]);
     this.#iconElement.setAttribute("fill", "currentColor");
     this.#iconShapeElement.setAttribute("href", "#icon-delete");
     this.#iconElement.append(this.#iconShapeElement);
-    this.#buttonElement.append(this.#labelElement, this.#iconElement);
+    this.#buttonElement.append(this.#iconElement);
     this.handleDeleteButton = this.handleDeleteButton.bind(this);
   }
 
@@ -27,16 +31,16 @@ class JobFilter extends HTMLLIElement {
     this.#jobFilter = newJobFilter;
     if (this.#jobFilter) {
       this.#labelElement.textContent = this.#jobFilter;
-      this.#buttonElement.dataset.name = this.#jobFilter;
     }
   }
 
   connectedCallback() {
     if (this.#initialMount) {
-      this.classList.add(classes.host);
-      this.append(this.#buttonElement);
+      this.classList.add(classes["jobFilter"]);
+      this.append(this.#labelElement, this.#buttonElement);
       this.#initialMount = false;
     }
+    this.upgradeProperty("jobFilter");
     this.#buttonElement.addEventListener("click", this.handleDeleteButton);
   }
 
@@ -44,10 +48,22 @@ class JobFilter extends HTMLLIElement {
     this.#buttonElement.removeEventListener("click", this.handleDeleteButton);
   }
 
-  handleDeleteButton(event: Event) {
-    const filter = (<HTMLButtonElement>event.currentTarget).dataset.name;
-    const customEvent = new CustomEvent("delete-job-filter", { detail: { filter }, bubbles: true });
-    this.dispatchEvent(customEvent);
+  upgradeProperty(prop: string) {
+    if (this.hasOwnProperty(prop)) {
+      let value = this[prop];
+      delete this[prop];
+      this[prop] = value;
+    }
+  }
+
+  handleDeleteButton() {
+    if (this.jobFilter) {
+      const customEvent = new CustomEvent("delete-job-filter", {
+        bubbles: true,
+        detail: { filter: this.jobFilter }
+      });
+      this.dispatchEvent(customEvent);
+    }
   }
 }
 

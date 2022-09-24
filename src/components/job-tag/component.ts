@@ -9,6 +9,7 @@ class JobTag extends HTMLLIElement {
   constructor() {
     super();
     this.#buttonElement.classList.add(classes["jobTag__button"]);
+    this.handleButtonClick = this.handleButtonClick.bind(this);
   }
 
   get jobTag(): string | undefined {
@@ -31,6 +32,11 @@ class JobTag extends HTMLLIElement {
       this.#initialMount = false;
     }
     this.upgradeProperty("jobTag");
+    this.#buttonElement.addEventListener("click", this.handleButtonClick);
+  }
+
+  disconnectedCallback() {
+    this.#buttonElement.removeEventListener("click", this.handleButtonClick);
   }
 
   upgradeProperty(prop: string) {
@@ -38,6 +44,16 @@ class JobTag extends HTMLLIElement {
       let value = this[prop];
       delete this[prop];
       this[prop] = value;
+    }
+  }
+
+  handleButtonClick() {
+    if (this.jobTag) {
+      const customEvent = new CustomEvent("add-job-filter", {
+        bubbles: true,
+        detail: { filter: this.jobTag }
+      });
+      this.dispatchEvent(customEvent);
     }
   }
 }

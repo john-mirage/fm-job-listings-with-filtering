@@ -6,41 +6,44 @@ import classes from "./component.module.css";
 class JobApp extends HTMLElement {
   [key: string]: any;
   #initialMount = true;
-  #jobList?: AppData.Job[];
-  #jobFilterList?: string[];
+  #jobs?: AppData.Job[];
+  #jobFilters?: string[];
   #containerElement = document.createElement("main");
   #titleElement = document.createElement("h1");
-  #filterListElement = <JobFilterList>document.createElement("job-filter-list");
-  #cardListElement = <JobCardList>document.createElement("job-card-list");
+  #jobFilterListElement = <JobFilterList>document.createElement("job-filter-list");
+  #jobCardListElement = <JobCardList>document.createElement("job-card-list");
 
   constructor() {
     super();
     this.#containerElement.classList.add(classes["jobApp__container"]);
     this.#titleElement.classList.add(classes["jobApp__title"]);
     this.#titleElement.textContent = "Job listings with filtering";
-    this.#containerElement.append(this.#titleElement, this.#cardListElement);
+    this.#containerElement.append(this.#titleElement, this.#jobCardListElement);
+    this.handleAddFilterEvent = this.handleAddFilterEvent.bind(this);
+    this.handleDeleteFilterEvent = this.handleDeleteFilterEvent.bind(this);
+    this.handleClearFiltersEvent = this.handleClearFiltersEvent.bind(this);
   }
 
-  get jobList(): AppData.Job[] | undefined {
-    return this.#jobList;
+  get jobs(): AppData.Job[] {
+    return this.#jobs || [];
   }
 
-  set jobList(newJobList: AppData.Job[] | undefined) {
-    this.#jobList = newJobList;
-    this.#cardListElement.jobList = this.#jobList;
+  set jobs(newJobs: AppData.Job[]) {
+    this.#jobs = newJobs;
+    this.#jobCardListElement.jobs = this.#jobs;
   }
 
-  get jobFilterList(): string[] | undefined {
-    return this.#jobFilterList;
+  get jobFilters(): string[] {
+    return this.#jobFilters || [];
   }
 
-  set jobFilterList(newJobFilterList: string[] | undefined) {
-    this.#jobFilterList = newJobFilterList;
-    this.#filterListElement.jobFilterList = this.#jobFilterList;
-    if (this.#jobFilterList) {
-      if (!this.#filterListElement.isConnected) this.#cardListElement.before(this.#filterListElement);
+  set jobFilters(newJobFilters: string[]) {
+    this.#jobFilters = newJobFilters;
+    this.#jobFilterListElement.jobFilters = this.#jobFilters;
+    if (this.#jobFilters.length > 0) {
+      if (!this.#jobFilterListElement.isConnected) this.#jobCardListElement.before(this.#jobFilterListElement);
     } else {
-      if (this.#filterListElement.isConnected) this.#filterListElement.remove();
+      if (this.#jobFilterListElement.isConnected) this.#jobFilterListElement.remove();
     }
   }
 
@@ -50,9 +53,18 @@ class JobApp extends HTMLElement {
       this.append(this.#containerElement);
       this.#initialMount = false;
     }
-    this.upgradeProperty("jobList");
-    this.upgradeProperty("jobFilterList");
-    this.jobList = jobs;
+    this.upgradeProperty("jobs");
+    this.upgradeProperty("jobFilters");
+    this.jobs = jobs;
+    this.addEventListener("add-job-filter", this.handleAddFilterEvent);
+    this.addEventListener("delete-job-filter", this.handleDeleteFilterEvent);
+    this.addEventListener("clear-job-filters", this.handleClearFiltersEvent);
+  }
+
+  disconnectedCallback() {
+    this.removeEventListener("add-job-filter", this.handleAddFilterEvent);
+    this.removeEventListener("delete-job-filter", this.handleDeleteFilterEvent);
+    this.removeEventListener("clear-job-filters", this.handleClearFiltersEvent);
   }
 
   upgradeProperty(prop: string) {
@@ -61,6 +73,30 @@ class JobApp extends HTMLElement {
       delete this[prop];
       this[prop] = value;
     }
+  }
+
+  filterJobs() {
+    
+  }
+
+  handleAddFilterEvent(event: Event) {
+    const { filter } = (<CustomEvent>event).detail;
+    console.log("add" , filter, "filter");
+    if (typeof filter === "string") {
+      if (!this.jobFilters.includes(filter)) this.jobFilters = [...this.jobFilters, filter];
+    }
+  }
+
+  handleDeleteFilterEvent(event: Event) {
+    const { filter } = (<CustomEvent>event).detail;
+    console.log("delete", filter, "filter");
+    if (typeof filter === "string") {
+      this.jobFilters = this.jobFilters.filter((jobFilter) => jobFilter !== filter);
+    }
+  }
+
+  handleClearFiltersEvent() {
+    this.jobFilters = [];
   }
 }
 

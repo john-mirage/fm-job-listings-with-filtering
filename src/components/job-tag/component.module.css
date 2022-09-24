@@ -12,6 +12,6 @@
   border-radius: 0.25rem; /* 4px */
   background-color: var(--color-light-grayish-cyan-bg);
   font-size: 1rem; /* 16px */
-  font-weight: 800;
+  font-weight: 600;
   color: var(--color-desaturated-dark-cyan);
 }

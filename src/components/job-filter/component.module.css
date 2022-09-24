@@ -1,43 +1,39 @@
-.filter {
+.jobFilter {
+  margin: 0 0.5rem 1rem 0.5rem; /* 0 8px 16px 8px */
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: auto;
-  height: 3.2rem;
-  margin: 0.8rem;
-  border-radius: 0.4rem;
-  background-color: var(--color-light-grayish-cyan-filter-tablets);
+  height: 2rem; /* 32px */
+  padding-left: 0.5rem; /* 8px */
+  border-radius: 0.25rem; /* 4px */
+  background-color: var(--color-light-grayish-cyan-bg);
   overflow: hidden;
 }
 
-.filter__label {
-  flex: 1 1 0;
-  padding-left: 0.8rem;
-  padding-right: 0.8rem;
-  font-family: var(--font);
-  font-size: 1.6rem;
-  font-weight: 700;
+.jobFilter__label {
+  margin-top: 0.25rem; /* 4px */
+  padding-right: 0.5rem; /* 8px */
+  font-size: 1rem; /* 16px */
+  font-weight: 600;
   color: var(--color-desaturated-dark-cyan);
 }
 
-.filter__button {
-  flex: 0 0 auto;
+.jobFilter__button {
   display: flex;
-  width: 3.2rem;
-  height: 3.2rem;
-  padding: 0;
-  background-color: var(--color-desaturated-dark-cyan);
+  justify-content: center;
+  align-items: center;
+  width: 2rem; /* 32px */
+  height: 100%;
   border: none;
-  cursor: pointer;
+  background-color: var(--color-desaturated-dark-cyan);
+  color: var(--color-white);
 }
 
-.filter__button:hover {
+.jobFilter__button:hover {
   background-color: var(--color-very-dark-grayish-cyan);
 }
 
-.filter__icon {
-  width: 1.4rem;
-  height: auto;
-  margin: auto;
-  color: var(--color-white);
+.jobFilter__buttonIcon {
+  width: 1rem; /* 16px */
+  height: 1rem; /* 16px */
 }
