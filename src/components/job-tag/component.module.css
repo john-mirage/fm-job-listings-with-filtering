@@ -1,7 +1,17 @@
 .jobTag {
-  
+  margin-left: 0.5rem; /* 8px */
+  margin-right: 0.5rem; /* 8px */
+  margin-bottom: 1rem; /* 16px */
 }
 
 .jobTag__button {
-  
+  height: 2rem; /* 32px */
+  padding-left: 0.5rem; /* 8px */
+  padding-right: 0.5rem; /* 8px */
+  border: none;
+  border-radius: 0.25rem; /* 4px */
+  background-color: var(--color-light-grayish-cyan-bg);
+  font-size: 1rem; /* 16px */
+  font-weight: 800;
+  color: var(--color-desaturated-dark-cyan);
 }

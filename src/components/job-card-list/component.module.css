@@ -3,7 +3,7 @@
 }
 
 .jobCardList__list {
-  margin: 0;
+  margin: 0 0 -2.5rem 0; /* 40px */
   padding: 0;
   list-style: none;
 }
