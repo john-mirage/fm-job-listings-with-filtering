@@ -1,3 +1,4 @@
+import JobBadge from "@components/job-badge";
 import jobTagList from "@components/job-tag-list";
 import classes from "./component.module.css";
 
@@ -8,6 +9,7 @@ class JobCard extends HTMLElement {
   #listItemElement = document.createElement("li");
   #logoElement = document.createElement("img");
   #jobTagListElement = <jobTagList>document.createElement("job-tag-list");
+  #jobBadge = <JobBadge>document.createElement("job-badge");
 
   constructor() {
     super();
@@ -26,6 +28,16 @@ class JobCard extends HTMLElement {
     if (this.#job) {
       this.#logoElement.setAttribute("src", this.#job.logo);
       this.#logoElement.setAttribute("alt", `${this.#job.company} logo`);
+      if (this.#job.featured) {
+        const jobBadge = <JobBadge>this.#jobBadge.cloneNode(true);
+        jobBadge.jobBadge = "featured";
+        this.#logoElement.after(jobBadge);
+      }
+      if (this.#job.new) {
+        const jobBadge = <JobBadge>this.#jobBadge.cloneNode(true);
+        jobBadge.jobBadge = "new!";
+        this.#logoElement.after(jobBadge);
+      }
       this.#jobTagListElement.jobTags = [
         this.#job.role,
         this.#job.level,
