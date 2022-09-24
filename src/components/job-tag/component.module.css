@@ -11,7 +11,7 @@
   padding-top: 0.25rem; /* 4px */
   border: none;
   border-radius: 0.25rem; /* 4px */
-  background-color: var(--color-light-grayish-cyan-bg);
+  background-color: var(--color-light-grayish-cyan-filter-tablets);
   font-size: 1rem; /* 16px */
   font-weight: 600;
   color: var(--color-desaturated-dark-cyan);

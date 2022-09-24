@@ -6,7 +6,7 @@
   height: 2rem; /* 32px */
   padding-left: 0.5rem; /* 8px */
   border-radius: 0.25rem; /* 4px */
-  background-color: var(--color-light-grayish-cyan-bg);
+  background-color: var(--color-light-grayish-cyan-filter-tablets);
   overflow: hidden;
 }
 
