@@ -77,6 +77,7 @@ class JobApp extends HTMLElement {
   }
 
   filterJobs() {
+    if (window.scrollY > 0) window.scroll(0, 0);
     this.#jobCardListElement.jobs = this.jobs.filter((job) => {
       const tags = [job.role, job.level, ...job.languages, ...job.tools];
       if (job.new) tags.push("new!");
@@ -105,6 +106,7 @@ class JobApp extends HTMLElement {
 
   handleClearFiltersEvent() {
     this.jobFilters = [];
+    this.#jobCardListElement.jobs = this.jobs;
   }
 }
 

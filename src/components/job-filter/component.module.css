@@ -1,5 +1,5 @@
 .jobFilter {
-  margin: 0 0.5rem 1rem 0.5rem; /* 0 8px 16px 8px */
+  margin: 0 0.5rem 1rem 0.5rem; /* 0px 8px 16px 8px */
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -34,6 +34,6 @@
 }
 
 .jobFilter__buttonIcon {
-  width: 1rem; /* 16px */
-  height: 1rem; /* 16px */
+  width: 0.875rem; /* 14px */
+  height: 0.875rem; /* 14px */
 }
