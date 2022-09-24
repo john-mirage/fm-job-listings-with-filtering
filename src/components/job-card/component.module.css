@@ -52,10 +52,25 @@
 }
 
 .jobCard__info {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
   width: 100%;
   font-size: 1rem;
   font-weight: 500;
-  color: var(--color-very-dark-grayish-cyan);
+  color: var(--color-dark-grayish-cyan);
+}
+
+.jobCard__infoDot {
+  margin-left: 1ch;
+  margin-right: 1ch;
+  margin-bottom: 0.25rem; /* 4px */
+  width: 0.25rem; /* 4px */
+  height: 0.25rem; /* 4px */
+  border-radius: 9999px;
+  background-color: var(--color-dark-grayish-cyan);
 }
 
 @media screen and (min-width: 335px) {

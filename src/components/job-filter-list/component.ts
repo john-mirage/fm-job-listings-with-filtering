@@ -27,7 +27,7 @@ class JobFilterList extends HTMLElement {
     if (this.#jobFilters.length > 0) {
       this.#listElement.replaceChildren(...this.#jobFilters.map(this.displayJobFilter.bind(this)));
     } else {
-      this.#listElement.replaceChildren();
+      if (this.#listElement.children.length > 0) this.#listElement.replaceChildren();
     }
   }
 

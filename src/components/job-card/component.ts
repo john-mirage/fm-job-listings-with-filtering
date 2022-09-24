@@ -12,6 +12,7 @@ class JobCard extends HTMLLIElement {
   #badgeListElement = <JobBadgeList>document.createElement("job-badge-list");
   #positionElement = document.createElement("p");
   #infoElement = document.createElement("p");
+  #dotElement = document.createElement("span");
   #jobTagListElement = <jobTagList>document.createElement("job-tag-list");
 
   constructor() {
@@ -21,6 +22,7 @@ class JobCard extends HTMLLIElement {
     this.#companyElement.classList.add(classes["jobCard__company"]);
     this.#positionElement.classList.add(classes["jobCard__position"]);
     this.#infoElement.classList.add(classes["jobCard__info"]);
+    this.#dotElement.classList.add(classes["jobCard__infoDot"]);
     this.#companyElement.setAttribute("href", "#");
     this.#logoElement.setAttribute("draggable", "false");
     this.#rowElement.append(this.#companyElement, this.#positionElement, this.#infoElement);
@@ -37,7 +39,13 @@ class JobCard extends HTMLLIElement {
       this.#logoElement.setAttribute("alt", `${this.#job.company} logo`);
       this.#companyElement.textContent = this.#job.company;
       this.#positionElement.textContent = this.#job.position;
-      this.#infoElement.textContent = `${this.#job.postedAt}  .  ${this.#job.contract}  .  ${this.#job.location}`;
+      this.#infoElement.append(
+        this.#job.postedAt,
+        this.#dotElement.cloneNode(true),
+        this.#job.contract,
+        this.#dotElement.cloneNode(true),
+        this.#job.location
+      );
       if (this.#job.featured) this.classList.add(classes["jobCard--featured"]);
       if (this.#job.featured || this.#job.new) {
         let jobBadges = [];
