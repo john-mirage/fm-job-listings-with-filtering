@@ -6,7 +6,7 @@ class JobCardList extends HTMLElement {
   #initialMount = true;
   #jobList?: AppData.Job[];
   #listElement = document.createElement("ul");
-  #jobCard = <JobCard>document.createElement("job-card");
+  #jobCard = <JobCard>document.createElement("li", { is: "job-card" });
 
   constructor() {
     super();

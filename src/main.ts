@@ -10,10 +10,10 @@ import "./main.css";
 
 customElements.define("job-app", JobApp);
 customElements.define("job-card-list", JobCardList);
-customElements.define("job-card", JobCard);
+customElements.define("job-card", JobCard, { extends: "li" });
 customElements.define("job-filter-list", JobFilterList);
-customElements.define("job-filter", JobFilter);
+customElements.define("job-filter", JobFilter, { extends: "li" });
 customElements.define("job-tag-list", JobTagList);
-customElements.define("job-tag", JobTag);
+customElements.define("job-tag", JobTag, { extends: "li" });
 customElements.define("job-badge", JobBadge);
 

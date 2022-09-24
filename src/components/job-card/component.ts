@@ -2,21 +2,18 @@ import JobBadge from "@components/job-badge";
 import jobTagList from "@components/job-tag-list";
 import classes from "./component.module.css";
 
-class JobCard extends HTMLElement {
+class JobCard extends HTMLLIElement {
   [key: string]: any;
   #initialMount = true;
   #job?: AppData.Job;
-  #listItemElement = document.createElement("li");
   #logoElement = document.createElement("img");
   #jobTagListElement = <jobTagList>document.createElement("job-tag-list");
   #jobBadge = <JobBadge>document.createElement("job-badge");
 
   constructor() {
     super();
-    this.#listItemElement.classList.add(classes["jobCard__listItem"]);
     this.#logoElement.classList.add(classes["jobCard__logo"]);
     this.#logoElement.setAttribute("draggable", "false");
-    this.#listItemElement.append(this.#logoElement, this.#jobTagListElement);
   }
 
   get job(): AppData.Job | undefined {
@@ -54,7 +51,7 @@ class JobCard extends HTMLElement {
   connectedCallback() {
     if (this.#initialMount) {
       this.classList.add(classes["jobCard"]);
-      this.append(this.#listItemElement);
+      this.append(this.#logoElement, this.#jobTagListElement);
       this.#initialMount = false;
     }
     this.upgradeProperty("job");

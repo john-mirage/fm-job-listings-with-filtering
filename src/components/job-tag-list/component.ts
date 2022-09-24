@@ -6,7 +6,7 @@ class JobTagList extends HTMLElement {
   #initialMount = true;
   #jobTags?: string[];
   #listElement = document.createElement("ul");
-  #jobTagElement = <JobTag>document.createElement("job-tag");
+  #jobTagElement = <JobTag>document.createElement("li", { is: "job-tag" });
 
   constructor() {
     super();

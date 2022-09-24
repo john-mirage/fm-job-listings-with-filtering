@@ -1,17 +1,14 @@
 import classes from "./component.module.css";
 
-class JobTag extends HTMLElement {
+class JobTag extends HTMLLIElement {
   [key: string]: any;
   #initialMount = true;
   #jobTag?: string;
-  #listItemElement = document.createElement("li");
   #buttonElement = document.createElement("button");
 
   constructor() {
     super();
-    this.#listItemElement.classList.add(classes["jobTag__listItem"]);
     this.#buttonElement.classList.add(classes["jobTag__button"]);
-    this.#listItemElement.append(this.#buttonElement);
   }
 
   get jobTag(): string | undefined {
@@ -30,7 +27,7 @@ class JobTag extends HTMLElement {
   connectedCallback() {
     if (this.#initialMount) {
       this.classList.add(classes["jobTag"]);
-      this.append(this.#listItemElement);
+      this.append(this.#buttonElement);
       this.#initialMount = false;
     }
     this.upgradeProperty("jobTag");
