@@ -1,35 +1,30 @@
-import Job from "@interfaces/job";
-import JobCardInterface from "@interfaces/job-card";
+import JobCard from "@components/job-card";
+import classes from "./component.module.css";
 
-class JobCardList extends HTMLDivElement {
-  _jobList: Job[] | false;
-  initialCall: boolean;
-  jobCards: JobCardInterface[];
+class JobCardList extends HTMLElement {
+  #initialMount = true;
+  #jobList?: AppData.Job[];
+  #listElement = document.createElement("ul");
 
   constructor() {
     super();
-    this._jobList = false;
-    this.initialCall = true;
-    this.jobCards = [];
+    this.#listElement.classList.add(classes.list);
   }
 
-  get jobList() {
-    if (this._jobList) {
-      return this._jobList;
-    } else {
-      throw new Error("The job card list is not defined");
-    }
+  get jobList(): AppData.Job[] | undefined {
+    return this.#jobList;
   }
 
-  set jobList(jobList: Job[]) {
-    this._jobList = jobList;
+  set jobList(newJobList: AppData.Job[] | undefined) {
+    this.#jobList = newJobList;
     this.displayJobCards();
   }
 
   connectedCallback() {
-    if (this.initialCall) {
-      this.classList.add("card-list");
-      this.initialCall = false;
+    if (this.#initialMount) {
+      this.classList.add(classes.host);
+      this.append(this.#listElement);
+      this.#initialMount = false;
     }
   }
 
@@ -47,8 +42,8 @@ class JobCardList extends HTMLDivElement {
     });
   }
 
-  createJobCard(job: Job) {
-    const jobCard = <JobCardInterface>document.createElement("article", { is: "job-card" });
+  createJobCard(job: AppData.Job) {
+    const jobCard = <JobCard>document.createElement("article", { is: "job-card" });
     jobCard.job = job;
     return jobCard;
   }

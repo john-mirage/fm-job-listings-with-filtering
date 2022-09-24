@@ -1,52 +1,37 @@
-import JobFilterInterface from "@interfaces/job-filter";
+import classes from "./component.module.css";
 
-class JobFilterList extends HTMLDivElement {
-  _jobFilterList: string[] | false;
-  initialCall: boolean;
-  jobFilters: JobFilterInterface[];
-  tagsSectionElement: HTMLDivElement;
-  buttonSectionElement: HTMLDivElement;
-  buttonElement: HTMLButtonElement;
+class JobFilterList extends HTMLElement {
+  #initialMount = true;
+  #jobFilterList: string[] | undefined;
+  #listElement = document.createElement("ul");
+  #buttonElement = document.createElement("button");
 
   constructor() {
     super();
-    this._jobFilterList = false;
-    this.initialCall = true;
-    this.jobFilters = [];
-    this.tagsSectionElement = document.createElement("div");
-    this.buttonSectionElement = document.createElement("div");
-    this.buttonElement = document.createElement("button");
-    this.tagsSectionElement.classList.add("filter-list__section", "filter-list__section--tags");
-    this.buttonSectionElement.classList.add("filter-list__section", "filter-list__section--button");
-    this.buttonElement.classList.add("filter-list__button");
-    this.buttonElement.textContent = "Clear";
+    this.#listElement.classList.add(classes.list);
+    this.#buttonElement.classList.add(classes.button);
   }
 
-  get jobFilterList() {
-    if (this._jobFilterList) {
-      return this._jobFilterList;
-    } else {
-      throw new Error("The job filter list is not defined");
-    }
+  get jobFilterList(): string[] | undefined {
+    return this.#jobFilterList;
   }
 
-  set jobFilterList(jobFilterList: string[]) {
-    this._jobFilterList = jobFilterList;
+  set jobFilterList(newJobFilterList: string[] | undefined) {
+    this.#jobFilterList = newJobFilterList;
     this.displayJobFilters();
   }
 
   connectedCallback() {
-    if (this.initialCall) {
-      this.classList.add("filter-list");
-      this.buttonSectionElement.append(this.buttonElement);
-      this.append(this.tagsSectionElement, this.buttonSectionElement);
-      this.initialCall = false;
+    if (this.#initialMount) {
+      this.classList.add(classes.host);
+      this.append(this.#listElement, this.#buttonElement);
+      this.#initialMount = false;
     }
-    this.buttonElement.addEventListener("click", this.handleClearButton);
+    this.#buttonElement.addEventListener("click", this.handleClearButton);
   }
 
   disconnectedCallback() {
-    this.buttonElement.removeEventListener("click", this.handleClearButton);
+    this.#buttonElement.removeEventListener("click", this.handleClearButton);
   }
 
   handleClearButton() {

@@ -1,48 +1,47 @@
 import JobCardList from "@components/job-card-list";
 import JobFilterList from "@components/job-filter-list";
+import classes from "./component.module.css";
 
 class JobApp extends HTMLElement {
   #initialMount = true;
-  webCardList: JobCardList;
-  webFilterList: JobFilterList;
+  #jobList?: AppData.Job[];
+  #jobFilterList?: string[];
+  #containerElement = document.createElement("main");
+  #titleElement = document.createElement("h1");
+  #filterListElement = <JobFilterList>document.createElement("job-filter-list");
+  #cardListElement = <JobCardList>document.createElement("job-card-list");
 
   constructor() {
     super();
-    this.webCardList = <JobCardList>document.createElement("div", { is: "job-card-list" });
-    this.webFilterList = <JobFilterList>document.createElement("div", { is: "job-filter-list" });
+    this.#containerElement.classList.add(classes.container);
+    this.#titleElement.classList.add(classes.title);
+    this.#titleElement.textContent = "Job listings with filtering";
+    this.#containerElement.append(this.#titleElement, this.#cardListElement);
   }
 
-  get jobList() {
-    if (this._jobList) {
-      return this._jobList;
-    } else {
-      throw new Error("The job list is not defined");
-    }
+  get jobList(): AppData.Job[] | undefined {
+    return this.#jobList;
   }
 
-  get jobFilterList() {
-    if (this._jobFilterList) {
-      return this._jobFilterList;
-    } else {
-      throw new Error("The job filter list is not defined");
-    }
+  set jobList(newJobList: AppData.Job[] | undefined) {
+    this.#jobList = newJobList;
+    //this.CardListElement.jobList = this.#jobList;
   }
 
-  set jobList(jobList) {
-    this._jobList = jobList;
-    this.jobCardListElement.jobList = jobList;
+  get jobFilterList(): string[] | undefined {
+    return this.#jobFilterList;
   }
 
-  set jobFilterList(jobFilterList) {
-    this._jobFilterList = jobFilterList;
-    this.jobFilterListElement.jobFilterList = jobFilterList;
+  set jobFilterList(newJobFilterList: string[] | undefined) {
+    this.#jobFilterList = newJobFilterList;
+    //this.webFilterList.jobFilterList = this.#jobFilterList;
     this.handleJobFilterListVisibility();
   }
 
   connectedCallback() {
     if (this.#initialMount) {
-      this.classList.add("page__container");
-      this.append(this.titleElement, this.jobCardListElement);
+      this.classList.add(classes.host);
+      this.append(this.#containerElement);
       this.#initialMount = false;
     }
     this.addEventListener("add-job-filter", this.addJobFilter);
@@ -57,20 +56,24 @@ class JobApp extends HTMLElement {
   }
 
   addJobFilter(event: Event) {
-    const filterToAdd = (<CustomEvent>event).detail.filter;
-    if (!this.jobFilterList.includes(filterToAdd)) {
-      this.jobFilterList = [...this.jobFilterList, filterToAdd];
-      this.filterJobList();
-      this.scrollToTheTop();
+    if (this.jobFilterList) {
+      const filterToAdd = (<CustomEvent>event).detail.filter;
+      if (!this.jobFilterList.includes(filterToAdd)) {
+        this.jobFilterList = [...this.jobFilterList, filterToAdd];
+        this.filterJobList();
+        this.scrollToTheTop();
+      }
     }
   }
 
   deleteJobFilter(event: Event) {
-    const filterToDelete = (<CustomEvent>event).detail.filter;
-    if (this.jobFilterList.includes(filterToDelete)) {
-      this.jobFilterList = this.jobFilterList.filter((filter) => filter !== filterToDelete);
-      this.filterJobList();
-      this.scrollToTheTop();
+    if (this.jobFilterList) {
+      const filterToDelete = (<CustomEvent>event).detail.filter;
+      if (this.jobFilterList.includes(filterToDelete)) {
+        this.jobFilterList = this.jobFilterList.filter((filter) => filter !== filterToDelete);
+        this.filterJobList();
+        this.scrollToTheTop();
+      }
     }
   }
 
@@ -87,21 +90,21 @@ class JobApp extends HTMLElement {
   }
 
   filterJobList() {
-    if (this.jobFilterList.length > 0) {
-      this.jobCardListElement.jobList = this.jobList.filter((job) => {
+    if (this.jobFilterList && this.jobList && this.jobFilterList.length > 0) {
+      this.#cardListElement.jobList = this.jobList.filter((job) => {
         const tags = [job.role, job.level, ...job.languages, ...job.tools];
-        return this.jobFilterList.every((jobFilter) => tags.includes(jobFilter));
+        return this.jobFilterList?.every((jobFilter) => tags.includes(jobFilter));
       });
     } else {
-      this.jobCardListElement.jobList = this.jobList;
+      this.#cardListElement.jobList = this.jobList;
     }
   }
 
   handleJobFilterListVisibility() {
-    if (this.jobFilterList.length > 0 && !this.jobFilterListElement.isConnected) {
-      this.jobCardListElement.before(this.jobFilterListElement);
-    } else if (this.jobFilterList.length <= 0 && this.jobFilterListElement.isConnected) {
-      this.removeChild(this.jobFilterListElement);
+    if (this.jobFilterList && this.jobFilterList.length > 0 && !this.#filterListElement.isConnected) {
+      this.#cardListElement.before(this.#filterListElement);
+    } else if (this.jobFilterList && this.jobFilterList.length <= 0 && this.#filterListElement.isConnected) {
+      this.removeChild(this.#filterListElement);
     }
   }
 }
