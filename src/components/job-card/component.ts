@@ -1,4 +1,3 @@
-import JobBadge from "@components/job-badge";
 import JobBadgeList from "@components/job-badge-list";
 import jobTagList from "@components/job-tag-list";
 import classes from "./component.module.css";
@@ -14,7 +13,6 @@ class JobCard extends HTMLLIElement {
   #positionElement = document.createElement("p");
   #infoElement = document.createElement("p");
   #jobTagListElement = <jobTagList>document.createElement("job-tag-list");
-  #jobBadge = <JobBadge>document.createElement("job-badge");
 
   constructor() {
     super();

@@ -1,62 +1,66 @@
+import JobFilter from "@components/job-filter/component";
 import classes from "./component.module.css";
 
 class JobFilterList extends HTMLElement {
+  [key: string]: any;
   #initialMount = true;
-  #jobFilterList: string[] | undefined;
+  #jobFilters?: string[];
   #listElement = document.createElement("ul");
   #buttonElement = document.createElement("button");
+  #jobFilterElement = document.createElement("li", { is: "job-filter" });
 
   constructor() {
     super();
-    this.#listElement.classList.add(classes.list);
-    this.#buttonElement.classList.add(classes.button);
+    this.#listElement.classList.add(classes["jobFilterList__list"]);
+    this.#buttonElement.classList.add(classes["jobFilterList__button"]);
+    this.#buttonElement.textContent = "Clear";
+    this.handleClearButtonClick = this.handleClearButtonClick.bind(this);
   }
 
-  get jobFilterList(): string[] | undefined {
-    return this.#jobFilterList;
+  get jobFilters(): string[] {
+    return this.#jobFilters || [];
   }
 
-  set jobFilterList(newJobFilterList: string[] | undefined) {
-    this.#jobFilterList = newJobFilterList;
-    this.displayJobFilters();
+  set jobFilters(newJobFilters: string[]) {
+    this.#jobFilters = newJobFilters;
+    if (this.#jobFilters.length > 0) {
+      this.#listElement.replaceChildren(
+        ...this.#jobFilters.map((jobFilter) => {
+          const jobFilterElement = <JobFilter>this.#jobFilterElement.cloneNode(true);
+          jobFilterElement.jobFilter = jobFilter;
+          return jobFilterElement;
+        })
+      );
+    } else {
+      this.#listElement.replaceChildren();
+    }
   }
 
   connectedCallback() {
     if (this.#initialMount) {
-      this.classList.add(classes.host);
+      this.classList.add(classes["jobFilterList"]);
       this.append(this.#listElement, this.#buttonElement);
       this.#initialMount = false;
     }
-    this.#buttonElement.addEventListener("click", this.handleClearButton);
+    this.upgradeProperty("jobFilters");
+    this.#buttonElement.addEventListener("click", this.handleClearButtonClick);
   }
 
   disconnectedCallback() {
-    this.#buttonElement.removeEventListener("click", this.handleClearButton);
+    this.#buttonElement.removeEventListener("click", this.handleClearButtonClick);
   }
 
-  handleClearButton() {
-    const customEvent = new CustomEvent("clear-job-filter-list", { bubbles: true });
+  upgradeProperty(prop: string) {
+    if (this.hasOwnProperty(prop)) {
+      let value = this[prop];
+      delete this[prop];
+      this[prop] = value;
+    }
+  }
+
+  handleClearButtonClick() {
+    const customEvent = new CustomEvent("clear-job-filters", { bubbles: true });
     this.dispatchEvent(customEvent);
-  }
-
-  displayJobFilters() {
-    this.tagsSectionElement.innerHTML = "";
-    this.jobFilterList.forEach((jobFilter) => {
-      const jobFilterElement = this.jobFilters.find((jobFilterElement) => jobFilterElement.jobFilter === jobFilter);
-      if (jobFilterElement) {
-        this.tagsSectionElement.append(jobFilterElement);
-      } else {
-        const newJobFilterElement = this.createJobFilter(jobFilter);
-        this.jobFilters = [...this.jobFilters, newJobFilterElement];
-        this.tagsSectionElement.append(newJobFilterElement);
-      }
-    });
-  }
-
-  createJobFilter(jobFilter: string) {
-    const jobFilterElement = <JobFilterInterface>document.createElement("div", { is: "job-filter" });
-    jobFilterElement.jobFilter = jobFilter;
-    return jobFilterElement;
   }
 }
 

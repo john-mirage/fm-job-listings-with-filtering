@@ -6,6 +6,12 @@ class JobBadge extends HTMLLIElement {
   #jobBadge?: string;
   #buttonElement = document.createElement("button");
 
+  constructor() {
+    super();
+    this.#buttonElement.classList.add(classes["jobBadge__button"]);
+    this.handleButtonClick = this.handleButtonClick.bind(this);
+  }
+
   get jobBadge(): string | undefined {
     return this.#jobBadge;
   }
@@ -28,11 +34,6 @@ class JobBadge extends HTMLLIElement {
     }
   }
 
-  constructor() {
-    super();
-    this.#buttonElement.classList.add(classes["jobBadge__button"]);
-  }
-
   connectedCallback() {
     if (this.#initialMount) {
       this.classList.add(classes["jobBadge"]);
@@ -40,6 +41,11 @@ class JobBadge extends HTMLLIElement {
       this.#initialMount = false;
     }
     this.upgradeProperty("jobBadge");
+    this.#buttonElement.addEventListener("click", this.handleButtonClick);
+  }
+
+  disconnectedCallback() {
+    this.#buttonElement.removeEventListener("click", this.handleButtonClick);
   }
 
   upgradeProperty(prop: string) {
@@ -47,6 +53,16 @@ class JobBadge extends HTMLLIElement {
       let value = this[prop];
       delete this[prop];
       this[prop] = value;
+    }
+  }
+
+  handleButtonClick() {
+    if (this.jobBadge) {
+      const customEvent = new CustomEvent("add-job-filter", {
+        bubbles: true,
+        detail: { filter: this.jobBadge }
+      });
+      this.dispatchEvent(customEvent);
     }
   }
 }

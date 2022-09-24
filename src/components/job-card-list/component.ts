@@ -4,27 +4,27 @@ import classes from "./component.module.css";
 class JobCardList extends HTMLElement {
   [key: string]: any;
   #initialMount = true;
-  #jobList?: AppData.Job[];
+  #jobs?: AppData.Job[];
   #listElement = document.createElement("ul");
-  #jobCard = <JobCard>document.createElement("li", { is: "job-card" });
+  #jobCardElement = <JobCard>document.createElement("li", { is: "job-card" });
 
   constructor() {
     super();
     this.#listElement.classList.add(classes["jobCardList__list"]);
   }
 
-  get jobList(): AppData.Job[] | undefined {
-    return this.#jobList;
+  get jobs(): AppData.Job[] {
+    return this.#jobs || [];
   }
 
-  set jobList(newJobList: AppData.Job[] | undefined) {
-    this.#jobList = newJobList;
-    if (this.#jobList) {
+  set jobs(newJobs: AppData.Job[]) {
+    this.#jobs = newJobs;
+    if (this.#jobs.length > 0) {
       this.#listElement.replaceChildren(
-        ...this.#jobList.map((job) => {
-          const jobCard = <JobCard>this.#jobCard.cloneNode(true);
-          jobCard.job = job;
-          return jobCard;
+        ...this.#jobs.map((job) => {
+          const jobCardElement = <JobCard>this.#jobCardElement.cloneNode(true);
+          jobCardElement.job = job;
+          return jobCardElement;
         })
       );
     } else {
@@ -38,7 +38,7 @@ class JobCardList extends HTMLElement {
       this.append(this.#listElement);
       this.#initialMount = false;
     }
-    this.upgradeProperty("jobList");
+    this.upgradeProperty("jobs");
   }
 
   upgradeProperty(prop: string) {
