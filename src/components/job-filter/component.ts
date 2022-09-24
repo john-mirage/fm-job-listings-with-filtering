@@ -1,46 +1,47 @@
-class JobFilter extends HTMLDivElement {
-  _jobFilter: string | false;
-  initialCall: boolean;
-  fragment: DocumentFragment;
-  labelElement: HTMLSpanElement;
-  buttonElement: HTMLButtonElement;
+import classes from "./component.module.css";
+
+const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+
+class JobFilter extends HTMLElement {
+  #initialMount = true;
+  #jobFilter?: string;
+  #buttonElement = document.createElement("button");
+  #labelElement = document.createElement("span");
+  #iconElement = document.createElementNS(SVG_NAMESPACE, "svg");
+  #iconShapeElement = document.createElementNS(SVG_NAMESPACE, "use");
 
   constructor() {
     super();
-    this._jobFilter = false;
-    this.initialCall = true;
-    const template = <HTMLTemplateElement>document.getElementById("template-filter");
-    this.fragment = <DocumentFragment>template.content.cloneNode(true);
-    this.labelElement = <HTMLSpanElement>this.fragment.querySelector('[data-name="tag"]');
-    this.buttonElement = <HTMLButtonElement>this.fragment.querySelector('[data-name="button"]');
+    this.#iconElement.setAttribute("fill", "currentColor");
+    this.#iconShapeElement.setAttribute("href", "#icon-delete");
+    this.#iconElement.append(this.#iconShapeElement);
+    this.#buttonElement.append(this.#labelElement, this.#iconElement);
     this.handleDeleteButton = this.handleDeleteButton.bind(this);
   }
 
-  get jobFilter() {
-    if (this._jobFilter) {
-      return this._jobFilter;
-    } else {
-      throw new Error("The job filter is not defined");
-    }
+  get jobFilter(): string | undefined {
+    return this.#jobFilter;
   }
 
-  set jobFilter(jobFilter: string) {
-    this._jobFilter = jobFilter;
+  set jobFilter(newJobFilter: string | undefined) {
+    this.#jobFilter = newJobFilter;
+    if (this.#jobFilter) {
+      this.#labelElement.textContent = this.#jobFilter;
+      this.#buttonElement.dataset.name = this.#jobFilter;
+    }
   }
 
   connectedCallback() {
-    if (this.initialCall) {
-      this.classList.add("filter");
-      this.labelElement.textContent = this.jobFilter;
-      this.buttonElement.dataset.name = this.jobFilter;
-      this.append(this.fragment);
-      this.initialCall = false;
+    if (this.#initialMount) {
+      this.classList.add(classes.host);
+      this.append(this.#buttonElement);
+      this.#initialMount = false;
     }
-    this.buttonElement.addEventListener("click", this.handleDeleteButton);
+    this.#buttonElement.addEventListener("click", this.handleDeleteButton);
   }
 
   disconnectedCallback() {
-    this.buttonElement.removeEventListener("click", this.handleDeleteButton);
+    this.#buttonElement.removeEventListener("click", this.handleDeleteButton);
   }
 
   handleDeleteButton(event: Event) {

@@ -1,6 +1,6 @@
 .page {
   background-image:
-    url("/src/assets/images/bg-header-mobile.svg"),
+    url("/src/images/bg-header-mobile.svg"),
     linear-gradient(to bottom, var(--color-desaturated-dark-cyan) 15.6rem, var(--color-light-grayish-cyan-bg) 15.6rem);
   background-repeat: no-repeat;
   background-position: top;
@@ -14,7 +14,7 @@
 @media screen and (min-width: 1158px) {
   .page {
     background-image:
-      url("/src/assets/images/bg-header-desktop.svg"),
+      url("/src/images/bg-header-desktop.svg"),
       linear-gradient(to bottom, var(--color-desaturated-dark-cyan) 15.6rem, var(--color-light-grayish-cyan-bg) 15.6rem);
   }
 }

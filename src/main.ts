@@ -5,9 +5,9 @@ import JobFilter from "@components/job-filter";
 import JobFilterList from "@components/job-filter-list";
 import "./main.css";
 
-customElements.define("job-app", JobApp, { extends: "main" });
-customElements.define("job-card-list", JobCardList, { extends: "ul" });
-customElements.define("job-card", JobCard, { extends: "li" });
-customElements.define("job-filter-list", JobFilterList, { extends: "ul" });
-customElements.define("job-filter", JobFilter, { extends: "li" });
+customElements.define("job-app", JobApp);
+customElements.define("job-card-list", JobCardList);
+customElements.define("job-card", JobCard);
+customElements.define("job-filter-list", JobFilterList);
+customElements.define("job-filter", JobFilter);
 
