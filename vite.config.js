@@ -6,10 +6,10 @@ export default defineConfig({
   base: "/job-listings-with-filtering/",
   resolve: {
     alias: {
-      '@assets': resolve(__dirname, 'src/assets'),
       '@components': resolve(__dirname, 'src/components'),
-      '@interfaces': resolve(__dirname, 'src/interfaces'),
       '@data': resolve(__dirname, 'src/data'),
+      '@images': resolve(__dirname, 'src/images'),
+      '@styles': resolve(__dirname, 'src/styles'),
     },
   },
 });

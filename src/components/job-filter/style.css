@@ -1,0 +1,43 @@
+.filter {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: auto;
+  height: 3.2rem;
+  margin: 0.8rem;
+  border-radius: 0.4rem;
+  background-color: var(--color-light-grayish-cyan-filter-tablets);
+  overflow: hidden;
+}
+
+.filter__label {
+  flex: 1 1 0;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+  font-family: var(--font);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-desaturated-dark-cyan);
+}
+
+.filter__button {
+  flex: 0 0 auto;
+  display: flex;
+  width: 3.2rem;
+  height: 3.2rem;
+  padding: 0;
+  background-color: var(--color-desaturated-dark-cyan);
+  border: none;
+  cursor: pointer;
+}
+
+.filter__button:hover {
+  background-color: var(--color-very-dark-grayish-cyan);
+}
+
+.filter__icon {
+  width: 1.4rem;
+  height: auto;
+  margin: auto;
+  color: var(--color-white);
+}
