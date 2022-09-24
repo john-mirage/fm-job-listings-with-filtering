@@ -2,7 +2,7 @@ import classes from "./component.module.css";
 
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
-class JobFilter extends HTMLElement {
+class JobFilter extends HTMLLIElement {
   #initialMount = true;
   #jobFilter?: string;
   #buttonElement = document.createElement("button");
