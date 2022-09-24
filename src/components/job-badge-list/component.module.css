@@ -1,0 +1,16 @@
+.jobBadgeList {
+  margin-left: -0.25rem; /* -4px */
+  margin-right: -0.25rem; /* -4px */
+  margin-bottom: -0.4rem; /* -8px */
+  display: block;
+}
+
+.jobBadgeList__list {
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0;
+  list-style: none;
+}

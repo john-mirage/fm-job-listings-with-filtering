@@ -3,8 +3,7 @@
 }
 
 .jobApp__container {
-  width: 100%;
-  height: auto;
+  padding: 13.25rem 1.5rem 2rem 1.5rem;
 }
 
 .jobApp__title {

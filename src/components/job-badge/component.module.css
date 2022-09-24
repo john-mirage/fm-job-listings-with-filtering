@@ -1,15 +1,25 @@
 .jobBadge {
-  
+  margin-left: 0.25rem; /* 4px */
+  margin-right: 0.25rem; /* 4px */
+  margin-bottom: 0.5rem; /* 8px */
 }
 
 .jobBadge__button {
-
+  height: 1.5rem; /* 24px */
+  padding-left: 0.5rem; /* 8px */
+  padding-right: 0.5rem; /* 8px */
+  border: none;
+  border-radius: 9999px;
+  font-size: 0.875rem; /* 14px */
+  font-weight: 800;
+  color: var(--color-white);
+  text-transform: uppercase;
 }
 
 .jobBadge__button--black {
-  
+  background-color: var(--color-very-dark-grayish-cyan);
 }
 
 .jobBadge__button--green {
-
+  background-color: var(--color-desaturated-dark-cyan);
 }
