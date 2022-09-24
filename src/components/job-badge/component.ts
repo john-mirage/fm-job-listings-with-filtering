@@ -1,6 +1,6 @@
 import classes from "./component.module.css";
 
-class JobBadge extends HTMLElement {
+class JobBadge extends HTMLLIElement {
   [key: string]: any;
   #initialMount = true;
   #jobBadge?: string;
@@ -30,7 +30,7 @@ class JobBadge extends HTMLElement {
 
   constructor() {
     super();
-    this.#buttonElement.classList.add("jobBadge__button");
+    this.#buttonElement.classList.add(classes["jobBadge__button"]);
   }
 
   connectedCallback() {

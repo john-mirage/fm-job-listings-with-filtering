@@ -1,4 +1,5 @@
 import JobBadge from "@components/job-badge";
+import JobBadgeList from "@components/job-badge-list";
 import jobTagList from "@components/job-tag-list";
 import classes from "./component.module.css";
 
@@ -7,13 +8,24 @@ class JobCard extends HTMLLIElement {
   #initialMount = true;
   #job?: AppData.Job;
   #logoElement = document.createElement("img");
+  #rowElement = document.createElement("div");
+  #companyElement = document.createElement("a");
+  #badgeListElement = <JobBadgeList>document.createElement("job-badge-list");
+  #positionElement = document.createElement("p");
+  #infoElement = document.createElement("p");
   #jobTagListElement = <jobTagList>document.createElement("job-tag-list");
   #jobBadge = <JobBadge>document.createElement("job-badge");
 
   constructor() {
     super();
     this.#logoElement.classList.add(classes["jobCard__logo"]);
+    this.#rowElement.classList.add(classes["jobCard__row"]);
+    this.#companyElement.classList.add(classes["jobCard__company"]);
+    this.#positionElement.classList.add(classes["jobCard__position"]);
+    this.#infoElement.classList.add(classes["jobCard__info"]);
+    this.#companyElement.setAttribute("href", "#");
     this.#logoElement.setAttribute("draggable", "false");
+    this.#rowElement.append(this.#companyElement, this.#positionElement, this.#infoElement);
   }
 
   get job(): AppData.Job | undefined {
@@ -25,15 +37,15 @@ class JobCard extends HTMLLIElement {
     if (this.#job) {
       this.#logoElement.setAttribute("src", this.#job.logo);
       this.#logoElement.setAttribute("alt", `${this.#job.company} logo`);
-      if (this.#job.featured) {
-        const jobBadge = <JobBadge>this.#jobBadge.cloneNode(true);
-        jobBadge.jobBadge = "featured";
-        this.#logoElement.after(jobBadge);
-      }
-      if (this.#job.new) {
-        const jobBadge = <JobBadge>this.#jobBadge.cloneNode(true);
-        jobBadge.jobBadge = "new!";
-        this.#logoElement.after(jobBadge);
+      this.#companyElement.textContent = this.#job.company;
+      this.#positionElement.textContent = this.#job.position;
+      this.#infoElement.textContent = `${this.#job.postedAt}  .  ${this.#job.contract}  .  ${this.#job.location}`;
+      if (this.#job.featured || this.#job.new) {
+        let jobBadges = [];
+        if (this.#job.new) jobBadges.push("new!");
+        if (this.#job.featured) jobBadges.push("featured");
+        this.#badgeListElement.jobBadges = jobBadges;
+        this.#companyElement.after(this.#badgeListElement);
       }
       this.#jobTagListElement.jobTags = [
         this.#job.role,
@@ -51,7 +63,7 @@ class JobCard extends HTMLLIElement {
   connectedCallback() {
     if (this.#initialMount) {
       this.classList.add(classes["jobCard"]);
-      this.append(this.#logoElement, this.#jobTagListElement);
+      this.append(this.#logoElement, this.#rowElement, this.#jobTagListElement);
       this.#initialMount = false;
     }
     this.upgradeProperty("job");

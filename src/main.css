@@ -8,6 +8,7 @@
   --color-dark-grayish-cyan: hsl(180, 8%, 52%);
   --color-very-dark-grayish-cyan: hsl(180, 14%, 20%);
   --color-white: hsl(0, 0%, 100%);
+  --color-border: hsl(150, 2%, 75%);
 
   --shadow: 0 20px 25px -5px rgba(91, 164, 164, 0.2), 0 8px 10px -6px rgba(91, 164, 164, 0.2);
 }
