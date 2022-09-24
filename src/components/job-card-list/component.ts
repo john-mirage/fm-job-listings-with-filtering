@@ -2,13 +2,15 @@ import JobCard from "@components/job-card";
 import classes from "./component.module.css";
 
 class JobCardList extends HTMLElement {
+  [key: string]: any;
   #initialMount = true;
   #jobList?: AppData.Job[];
   #listElement = document.createElement("ul");
+  #jobCard = <JobCard>document.createElement("job-card");
 
   constructor() {
     super();
-    this.#listElement.classList.add(classes.list);
+    this.#listElement.classList.add(classes["jobCardList__list"]);
   }
 
   get jobList(): AppData.Job[] | undefined {
@@ -17,35 +19,34 @@ class JobCardList extends HTMLElement {
 
   set jobList(newJobList: AppData.Job[] | undefined) {
     this.#jobList = newJobList;
-    this.displayJobCards();
+    if (this.#jobList) {
+      this.#listElement.replaceChildren(
+        ...this.#jobList.map((job) => {
+          const jobCard = <JobCard>this.#jobCard.cloneNode(true);
+          jobCard.job = job;
+          return jobCard;
+        })
+      );
+    } else {
+      this.#listElement.replaceChildren();
+    }
   }
 
   connectedCallback() {
     if (this.#initialMount) {
-      this.classList.add(classes.host);
+      this.classList.add(classes["jobCardList"]);
       this.append(this.#listElement);
       this.#initialMount = false;
     }
+    this.upgradeProperty("jobList");
   }
 
-  displayJobCards() {
-    this.innerHTML = "";
-    this.jobList.forEach((job) => {
-      const jobCardElement = this.jobCards.find((jobCard) => jobCard.job.id === job.id);
-      if (jobCardElement) {
-        this.append(jobCardElement);
-      } else {
-        const newJobCardElement = this.createJobCard(job);
-        this.jobCards = [...this.jobCards, newJobCardElement];
-        this.append(newJobCardElement);
-      }
-    });
-  }
-
-  createJobCard(job: AppData.Job) {
-    const jobCard = <JobCard>document.createElement("article", { is: "job-card" });
-    jobCard.job = job;
-    return jobCard;
+  upgradeProperty(prop: string) {
+    if (this.hasOwnProperty(prop)) {
+      let value = this[prop];
+      delete this[prop];
+      this[prop] = value;
+    }
   }
 }
 
