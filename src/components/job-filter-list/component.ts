@@ -8,6 +8,7 @@ class JobFilterList extends HTMLElement {
   #listElement = document.createElement("ul");
   #buttonElement = document.createElement("button");
   #jobFilterElement = document.createElement("li", { is: "job-filter" });
+  #jobFilterElementCache = new Map();
 
   constructor() {
     super();
@@ -24,13 +25,7 @@ class JobFilterList extends HTMLElement {
   set jobFilters(newJobFilters: string[]) {
     this.#jobFilters = newJobFilters;
     if (this.#jobFilters.length > 0) {
-      this.#listElement.replaceChildren(
-        ...this.#jobFilters.map((jobFilter) => {
-          const jobFilterElement = <JobFilter>this.#jobFilterElement.cloneNode(true);
-          jobFilterElement.jobFilter = jobFilter;
-          return jobFilterElement;
-        })
-      );
+      this.#listElement.replaceChildren(...this.#jobFilters.map(this.displayJobFilter.bind(this)));
     } else {
       this.#listElement.replaceChildren();
     }
@@ -55,6 +50,17 @@ class JobFilterList extends HTMLElement {
       let value = this[prop];
       delete this[prop];
       this[prop] = value;
+    }
+  }
+
+  displayJobFilter(jobFilter: string) {
+    if (this.#jobFilterElementCache.has(jobFilter)) {
+      return this.#jobFilterElementCache.get(jobFilter);
+    } else {
+      const jobFilterElement = <JobFilter>this.#jobFilterElement.cloneNode(true);
+      jobFilterElement.jobFilter = jobFilter;
+      this.#jobFilterElementCache.set(jobFilter, jobFilterElement);
+      return jobFilterElement;
     }
   }
 
