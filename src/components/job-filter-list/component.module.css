@@ -23,9 +23,22 @@
 
 .jobFilterList__button {
   margin-left: 1rem; /* 16px */
+  height: 2rem; /* 32px */
   font-size: 1rem; /* 16px */
   font-weight: 600;
-  color: var(--color-dark-grayish-cyan);
-  border: none;
   background-color: transparent;
+  border: none;
+  color: var(--color-dark-grayish-cyan);
+  cursor: pointer;
+}
+
+.jobFilterList__button:not(:disabled, :active):hover {
+  color: var(--color-desaturated-dark-cyan);
+  text-decoration: underline;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .jobFilterList__button {
+    transition: color 150ms ease;
+  }
 }

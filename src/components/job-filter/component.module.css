@@ -7,7 +7,6 @@
   padding-left: 0.5rem; /* 8px */
   border-radius: 0.25rem; /* 4px */
   background-color: var(--color-light-grayish-cyan-filter-tablets);
-  overflow: hidden;
 }
 
 .jobFilter__label {
@@ -20,21 +19,39 @@
 }
 
 .jobFilter__button {
+  --filter-shadow: 0;
+
   display: flex;
   justify-content: center;
   align-items: center;
   width: 2rem; /* 32px */
   height: 100%;
   border: none;
+  border-top-right-radius: 0.25rem; /* 4px */
+  border-bottom-right-radius: 0.25rem; /* 4px */
   background-color: var(--color-desaturated-dark-cyan);
   color: var(--color-white);
+  box-shadow: 0 0 0 var(--filter-shadow) hsl(180 14% 20% / 25%);
+  cursor: pointer;
 }
 
-.jobFilter__button:hover {
+.jobFilter__button:not(:disabled):hover {
   background-color: var(--color-very-dark-grayish-cyan);
+}
+
+.jobFilter__button:not(:disabled, :active):hover {
+  --filter-shadow: 0.25rem; /* 4px */
 }
 
 .jobFilter__buttonIcon {
   width: 0.875rem; /* 14px */
   height: 0.875rem; /* 14px */
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .jobFilter__button {
+    transition:
+      background-color 150ms ease,
+      box-shadow 150ms ease;
+  }
 }

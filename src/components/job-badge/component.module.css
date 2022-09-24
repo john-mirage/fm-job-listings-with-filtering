@@ -5,6 +5,8 @@
 }
 
 .jobBadge__button {
+  --badge-shadow: 0;
+
   height: 1.5rem; /* 24px */
   padding-left: 0.5rem; /* 8px */
   padding-right: 0.5rem; /* 8px */
@@ -15,12 +17,25 @@
   font-weight: 600;
   color: var(--color-white);
   text-transform: uppercase;
+  cursor: pointer;
 }
 
 .jobBadge__button--black {
   background-color: var(--color-very-dark-grayish-cyan);
+  box-shadow: 0 0 0 var(--badge-shadow) hsl(180 14% 20% / 25%);
 }
 
 .jobBadge__button--green {
   background-color: var(--color-desaturated-dark-cyan);
+  box-shadow: 0 0 0 var(--badge-shadow) hsl(180 29% 50% / 25%);
+}
+
+.jobBadge__button:not(:disabled, :active):hover {
+  --badge-shadow: 0.25rem; /* 4px */
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .jobBadge__button {
+    transition: box-shadow 150ms ease;
+  }
 }
