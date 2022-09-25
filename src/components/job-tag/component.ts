@@ -1,7 +1,6 @@
 import classes from "./component.module.css";
 
 class JobTag extends HTMLLIElement {
-  [key: string]: any;
   #initialMount = true;
   #jobTag?: string;
   #buttonElement = document.createElement("button");
@@ -31,20 +30,11 @@ class JobTag extends HTMLLIElement {
       this.append(this.#buttonElement);
       this.#initialMount = false;
     }
-    this.upgradeProperty("jobTag");
     this.#buttonElement.addEventListener("click", this.handleButtonClick);
   }
 
   disconnectedCallback() {
     this.#buttonElement.removeEventListener("click", this.handleButtonClick);
-  }
-
-  upgradeProperty(prop: string) {
-    if (this.hasOwnProperty(prop)) {
-      let value = this[prop];
-      delete this[prop];
-      this[prop] = value;
-    }
   }
 
   handleButtonClick() {

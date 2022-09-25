@@ -2,7 +2,6 @@ import JobBadge from "@components/job-badge/component";
 import classes from "./component.module.css";
 
 class JobBadgeList extends HTMLElement {
-  [key: string]: any;
   #initialMount = true;
   #jobBadges?: string[];
   #listElement = document.createElement("ul");
@@ -37,15 +36,6 @@ class JobBadgeList extends HTMLElement {
       this.classList.add(classes["jobBadgeList"]);
       this.append(this.#listElement);
       this.#initialMount = false;
-    }
-    this.upgradeProperty("jobBadges");
-  }
-
-  upgradeProperty(prop: string) {
-    if (this.hasOwnProperty(prop)) {
-      let value = this[prop];
-      delete this[prop];
-      this[prop] = value;
     }
   }
 }

@@ -2,28 +2,27 @@ import JobCard from "@components/job-card";
 import classes from "./component.module.css";
 
 class JobCardList extends HTMLElement {
-  [key: string]: any;
   #initialMount = true;
-  #jobs?: AppData.Job[];
+  #jobs: Map<number, AppData.Job> = new Map();
   #listElement = document.createElement("ul");
   #jobCardElement = <JobCard>document.createElement("li", { is: "job-card" });
-  #jobCardElementCache = new Map();
+  #jobCardElementCache: Map<number, JobCard> = new Map();
 
   constructor() {
     super();
     this.#listElement.classList.add(classes["jobCardList__list"]);
   }
 
-  get jobs(): AppData.Job[] {
-    return this.#jobs || [];
+  get jobs(): Map<number, AppData.Job> {
+    return this.#jobs;
   }
 
-  set jobs(newJobs: AppData.Job[]) {
+  set jobs(newJobs: Map<number, AppData.Job>) {
     this.#jobs = newJobs;
-    if (this.#jobs.length > 0) {
-      this.#listElement.replaceChildren(...this.#jobs.map(this.displayJobCard.bind(this)));
+    if (this.#jobs.size > 0) {
+      this.displayJobCards();
     } else {
-      this.#listElement.replaceChildren();
+      if (this.#listElement.children.length > 0) this.#listElement.replaceChildren();
     }
   }
 
@@ -33,26 +32,41 @@ class JobCardList extends HTMLElement {
       this.append(this.#listElement);
       this.#initialMount = false;
     }
-    this.upgradeProperty("jobs");
   }
 
-  upgradeProperty(prop: string) {
-    if (this.hasOwnProperty(prop)) {
-      let value = this[prop];
-      delete this[prop];
-      this[prop] = value;
+  insertJobCard(jobCard: JobCard, index: number) {
+    if (index <= 0) {
+      this.#listElement.prepend(jobCard);
+    } else {
+      this.#listElement.children[index - 1].after(jobCard);
     }
   }
 
-  displayJobCard(job: AppData.Job) {
+  getJobCard(job: AppData.Job) {
     if (this.#jobCardElementCache.has(job.id)) {
-      return this.#jobCardElementCache.get(job.id);
+      return <JobCard>this.#jobCardElementCache.get(job.id);
     } else {
       const jobCardElement = <JobCard>this.#jobCardElement.cloneNode(true);
       jobCardElement.job = job;
       this.#jobCardElementCache.set(job.id, jobCardElement);
       return jobCardElement;
     }
+  }
+
+  displayJobCards() {
+    const jobCards = <JobCard[]>Array.from(this.#listElement.children);
+    jobCards.forEach((jobCard) => {
+      const jobHasNotBeenFound = !this.jobs.has(jobCard.job.id);
+      if (jobHasNotBeenFound) jobCard.remove();
+    });
+
+    [...this.jobs.values()].forEach((job, index) => {
+      const jobCard = <JobCard | null>this.#listElement.querySelector(`[data-id="${job.id}"]`);
+      if (!jobCard) {
+        const newJobCard = this.getJobCard(job);
+        this.insertJobCard(newJobCard, index);
+      }
+    });
   }
 }
 

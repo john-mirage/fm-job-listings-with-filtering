@@ -2,13 +2,12 @@ import JobFilter from "@components/job-filter/component";
 import classes from "./component.module.css";
 
 class JobFilterList extends HTMLElement {
-  [key: string]: any;
   #initialMount = true;
-  #jobFilters?: string[];
+  #jobFilters?: Set<string>;
   #listElement = document.createElement("ul");
   #buttonElement = document.createElement("button");
   #jobFilterElement = document.createElement("li", { is: "job-filter" });
-  #jobFilterElementCache = new Map();
+  #jobFilterElementCache: Map<string, JobFilter> = new Map();
 
   constructor() {
     super();
@@ -18,14 +17,18 @@ class JobFilterList extends HTMLElement {
     this.handleClearButtonClick = this.handleClearButtonClick.bind(this);
   }
 
-  get jobFilters(): string[] {
-    return this.#jobFilters || [];
+  get jobFilters(): Set<string> {
+    if (this.#jobFilters) {
+      return this.#jobFilters;
+    } else {
+      throw new Error("The job filters are not defined");
+    }
   }
 
-  set jobFilters(newJobFilters: string[]) {
+  set jobFilters(newJobFilters: Set<string>) {
     this.#jobFilters = newJobFilters;
-    if (this.#jobFilters.length > 0) {
-      this.#listElement.replaceChildren(...this.#jobFilters.map(this.displayJobFilter.bind(this)));
+    if (this.#jobFilters.size > 0) {
+      this.displayJobFilters();
     } else {
       if (this.#listElement.children.length > 0) this.#listElement.replaceChildren();
     }
@@ -37,7 +40,6 @@ class JobFilterList extends HTMLElement {
       this.append(this.#listElement, this.#buttonElement);
       this.#initialMount = false;
     }
-    this.upgradeProperty("jobFilters");
     this.#buttonElement.addEventListener("click", this.handleClearButtonClick);
   }
 
@@ -45,23 +47,39 @@ class JobFilterList extends HTMLElement {
     this.#buttonElement.removeEventListener("click", this.handleClearButtonClick);
   }
 
-  upgradeProperty(prop: string) {
-    if (this.hasOwnProperty(prop)) {
-      let value = this[prop];
-      delete this[prop];
-      this[prop] = value;
+  insertJobFilter(jobFilter: JobFilter, index: number) {
+    if (index <= 0) {
+      this.#listElement.prepend(jobFilter);
+    } else {
+      this.#listElement.children[index - 1].after(jobFilter);
     }
   }
 
-  displayJobFilter(jobFilter: string) {
+  getJobFilter(jobFilter: string) {
     if (this.#jobFilterElementCache.has(jobFilter)) {
-      return this.#jobFilterElementCache.get(jobFilter);
+      return <JobFilter>this.#jobFilterElementCache.get(jobFilter);
     } else {
       const jobFilterElement = <JobFilter>this.#jobFilterElement.cloneNode(true);
       jobFilterElement.jobFilter = jobFilter;
       this.#jobFilterElementCache.set(jobFilter, jobFilterElement);
       return jobFilterElement;
     }
+  }
+
+  displayJobFilters() {
+    const jobFilterElements = <JobFilter[]>Array.from(this.#listElement.children);
+    jobFilterElements.forEach((jobFilterElement) => {
+      const jobHasNotBeenFound = !this.jobFilters.has(jobFilterElement.jobFilter);
+      if (jobHasNotBeenFound) jobFilterElement.remove();
+    });
+
+    [...this.jobFilters.values()].forEach((jobFilter, index) => {
+      const jobFilterElement = <JobFilter | null>this.#listElement.querySelector(`[data-id="${jobFilter}"]`);
+      if (!jobFilterElement) {
+        const newJobFilter = this.getJobFilter(jobFilter);
+        this.insertJobFilter(newJobFilter, index);
+      }
+    });
   }
 
   handleClearButtonClick() {

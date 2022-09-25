@@ -1,17 +1,15 @@
 import JobCardList from "@components/job-card-list";
 import JobFilterList from "@components/job-filter-list";
-import jobs from "@data/jobs.json";
 import classes from "./component.module.css";
 
 class JobApp extends HTMLElement {
-  [key: string]: any;
   #initialMount = true;
-  #jobs?: AppData.Job[];
-  #jobFilters?: string[];
   #containerElement = document.createElement("main");
   #titleElement = document.createElement("h1");
   #jobFilterListElement = <JobFilterList>document.createElement("job-filter-list");
   #jobCardListElement = <JobCardList>document.createElement("job-card-list");
+  jobs: Map<number, AppData.Job> = new Map();
+  jobFilters: Set<string> = new Set();
 
   constructor() {
     super();
@@ -24,39 +22,12 @@ class JobApp extends HTMLElement {
     this.handleClearFiltersEvent = this.handleClearFiltersEvent.bind(this);
   }
 
-  get jobs(): AppData.Job[] {
-    return this.#jobs || [];
-  }
-
-  set jobs(newJobs: AppData.Job[]) {
-    this.#jobs = newJobs;
-    this.#jobCardListElement.jobs = this.#jobs;
-  }
-
-  get jobFilters(): string[] {
-    return this.#jobFilters || [];
-  }
-
-  set jobFilters(newJobFilters: string[]) {
-    this.#jobFilters = newJobFilters;
-    this.#jobFilterListElement.jobFilters = this.#jobFilters;
-    if (this.#jobFilters.length > 0) {
-      if (!this.#jobFilterListElement.isConnected) this.#jobCardListElement.before(this.#jobFilterListElement);
-    } else {
-      if (this.#jobFilterListElement.isConnected) this.#jobFilterListElement.remove();
-    }
-  }
-
   connectedCallback() {
     if (this.#initialMount) {
       this.classList.add(classes["jobApp"]);
       this.append(this.#containerElement);
       this.#initialMount = false;
     }
-    this.upgradeProperty("jobs");
-    this.upgradeProperty("jobFilters");
-    this.jobs = jobs;
-    this.jobFilters = [];
     this.addEventListener("add-job-filter", this.handleAddFilterEvent);
     this.addEventListener("delete-job-filter", this.handleDeleteFilterEvent);
     this.addEventListener("clear-job-filters", this.handleClearFiltersEvent);
@@ -68,29 +39,37 @@ class JobApp extends HTMLElement {
     this.removeEventListener("clear-job-filters", this.handleClearFiltersEvent);
   }
 
-  upgradeProperty(prop: string) {
-    if (this.hasOwnProperty(prop)) {
-      let value = this[prop];
-      delete this[prop];
-      this[prop] = value;
+  updateJobCardList() {
+    
+  }
+
+  updateJobFilterList() {
+    if (this.jobFilters.size > 0) {
+      if (!this.#jobFilterListElement.isConnected) this.#jobCardListElement.before(this.#jobFilterListElement);
+    } else {
+      if (this.#jobFilterListElement.isConnected) this.#jobFilterListElement.remove();
     }
   }
 
   filterJobs() {
     if (window.scrollY > 0) window.scroll(0, 0);
-    this.#jobCardListElement.jobs = this.jobs.filter((job) => {
+    const jobsMap = new Map();
+    this.jobs.forEach((job) => {
       const tags = [job.role, job.level, ...job.languages, ...job.tools];
       if (job.new) tags.push("new!");
       if (job.featured) tags.push("featured");
-      return this.jobFilters.every((jobFilter) => tags.includes(jobFilter));
+      const isValid = [...this.jobFilters].every((jobFilter) => tags.includes(jobFilter));
+      if (isValid) jobsMap.set(job.id, job);
     });
+    this.#jobCardListElement.jobs = jobsMap;
   }
 
   handleAddFilterEvent(event: Event) {
     const { filter } = (<CustomEvent>event).detail;
     if (typeof filter === "string") {
-      if (!this.jobFilters.includes(filter)) {
-        this.jobFilters = [...this.jobFilters, filter];
+      if (!this.jobFilters.has(filter)) {
+        this.jobFilters.add(filter);
+        this.jobFilters = this.jobFilters;
         this.filterJobs();
       };
     }
@@ -99,13 +78,17 @@ class JobApp extends HTMLElement {
   handleDeleteFilterEvent(event: Event) {
     const { filter } = (<CustomEvent>event).detail;
     if (typeof filter === "string") {
-      this.jobFilters = this.jobFilters.filter((jobFilter) => jobFilter !== filter);
-      this.filterJobs();
+      if (this.jobFilters.has(filter)) {
+        this.jobFilters.delete(filter);
+        this.jobFilters = this.jobFilters;
+        this.filterJobs();
+      }
     }
   }
 
   handleClearFiltersEvent() {
-    this.jobFilters = [];
+    this.jobFilters.clear();
+    this.jobFilters = this.jobFilters;
     this.#jobCardListElement.jobs = this.jobs;
   }
 }

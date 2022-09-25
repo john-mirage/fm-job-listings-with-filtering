@@ -3,7 +3,6 @@ import classes from "./component.module.css";
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
 class JobFilter extends HTMLLIElement {
-  [key: string]: any;
   #initialMount = true;
   #jobFilter?: string;
   #buttonElement = document.createElement("button");
@@ -23,15 +22,18 @@ class JobFilter extends HTMLLIElement {
     this.handleDeleteButton = this.handleDeleteButton.bind(this);
   }
 
-  get jobFilter(): string | undefined {
-    return this.#jobFilter;
+  get jobFilter(): string {
+    if (this.#jobFilter) {
+      return this.#jobFilter;
+    } else {
+      throw new Error("The job filter is not defined");
+    }
   }
 
-  set jobFilter(newJobFilter: string | undefined) {
+  set jobFilter(newJobFilter: string) {
     this.#jobFilter = newJobFilter;
-    if (this.#jobFilter) {
-      this.#labelElement.textContent = this.#jobFilter;
-    }
+    this.#labelElement.textContent = this.jobFilter;
+    this.dataset.id = this.jobFilter;
   }
 
   connectedCallback() {
@@ -40,20 +42,11 @@ class JobFilter extends HTMLLIElement {
       this.append(this.#labelElement, this.#buttonElement);
       this.#initialMount = false;
     }
-    this.upgradeProperty("jobFilter");
     this.#buttonElement.addEventListener("click", this.handleDeleteButton);
   }
 
   disconnectedCallback() {
     this.#buttonElement.removeEventListener("click", this.handleDeleteButton);
-  }
-
-  upgradeProperty(prop: string) {
-    if (this.hasOwnProperty(prop)) {
-      let value = this[prop];
-      delete this[prop];
-      this[prop] = value;
-    }
   }
 
   handleDeleteButton() {

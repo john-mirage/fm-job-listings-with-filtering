@@ -1,7 +1,6 @@
 import classes from "./component.module.css";
 
 class JobBadge extends HTMLLIElement {
-  [key: string]: any;
   #initialMount = true;
   #jobBadge?: string;
   #buttonElement = document.createElement("button");
@@ -40,20 +39,11 @@ class JobBadge extends HTMLLIElement {
       this.append(this.#buttonElement);
       this.#initialMount = false;
     }
-    this.upgradeProperty("jobBadge");
     this.#buttonElement.addEventListener("click", this.handleButtonClick);
   }
 
   disconnectedCallback() {
     this.#buttonElement.removeEventListener("click", this.handleButtonClick);
-  }
-
-  upgradeProperty(prop: string) {
-    if (this.hasOwnProperty(prop)) {
-      let value = this[prop];
-      delete this[prop];
-      this[prop] = value;
-    }
   }
 
   handleButtonClick() {
