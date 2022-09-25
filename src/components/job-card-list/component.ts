@@ -89,12 +89,19 @@ class JobCardList extends HTMLElement {
   }
 
   displayJobCards() {
+    if (window.scrollY > 0) window.scroll(0, 0);
     const jobs = this.jobs;
     const jobFilters = this.jobFilters;
     if (jobs && jobFilters) {
-      if (jobs.length > 0) {
-        this.handleJobCardsDeletion(jobs);
-        this.handleJobCardsAddition(jobs);
+      const filteredJobs = jobs.filter((job) => {
+        const tags = [job.role, job.level, ...job.languages, ...job.tools];
+        if (job.new) tags.push("new!");
+        if (job.featured) tags.push("featured");
+        return jobFilters.every((jobFilter) => tags.includes(jobFilter));
+      });
+      if (filteredJobs.length > 0) {
+        this.handleJobCardsDeletion(filteredJobs);
+        this.handleJobCardsAddition(filteredJobs);
       } else {
         this.handleJobCardsClear();
       }
@@ -102,21 +109,6 @@ class JobCardList extends HTMLElement {
       this.handleJobCardsClear();
     }
   }
-
-  /*
-  filterJobs() {
-    if (window.scrollY > 0) window.scroll(0, 0);
-    const jobsMap = new Map();
-    this.jobs.forEach((job) => {
-      const tags = [job.role, job.level, ...job.languages, ...job.tools];
-      if (job.new) tags.push("new!");
-      if (job.featured) tags.push("featured");
-      const isValid = [...this.jobFilters].every((jobFilter) => tags.includes(jobFilter));
-      if (isValid) jobsMap.set(job.id, job);
-    });
-    this.#jobCardListElement.jobs = jobsMap;
-  }
-  */
 }
 
 export default JobCardList;
