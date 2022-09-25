@@ -3,7 +3,6 @@ import jobTagList from "@components/job-tag-list";
 import classes from "./component.module.css";
 
 class JobCard extends HTMLLIElement {
-  [key: string]: any;
   #initialMount = true;
   #job?: AppData.Job;
   #logoElement = document.createElement("img");
@@ -28,13 +27,18 @@ class JobCard extends HTMLLIElement {
     this.#rowElement.append(this.#companyElement, this.#positionElement, this.#infoElement);
   }
 
-  get job(): AppData.Job | undefined {
-    return this.#job;
+  get job(): AppData.Job {
+    if (this.#job) {
+      return this.#job;
+    } else {
+      throw new Error("The job is not defined");
+    }
   }
 
-  set job(newJob: AppData.Job | undefined) {
+  set job(newJob: AppData.Job) {
     this.#job = newJob;
     if (this.#job) {
+      this.dataset.id = String(this.#job.id);
       this.#logoElement.setAttribute("src", this.#job.logo);
       this.#logoElement.setAttribute("alt", `${this.#job.company} logo`);
       this.#companyElement.textContent = this.#job.company;
@@ -72,15 +76,6 @@ class JobCard extends HTMLLIElement {
       this.classList.add(classes["jobCard"]);
       this.append(this.#logoElement, this.#rowElement, this.#jobTagListElement);
       this.#initialMount = false;
-    }
-    this.upgradeProperty("job");
-  }
-
-  upgradeProperty(prop: string) {
-    if (this.hasOwnProperty(prop)) {
-      let value = this[prop];
-      delete this[prop];
-      this[prop] = value;
     }
   }
 }
