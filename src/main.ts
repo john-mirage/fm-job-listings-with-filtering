@@ -19,8 +19,7 @@ customElements.define("job-tag", JobTag, { extends: "li" });
 customElements.define("job-badge-list", JobBadgeList);
 customElements.define("job-badge", JobBadge, { extends: "li" });
 
+const app = <HTMLDivElement>document.getElementById("app");
 const jobApp = <JobApp>document.createElement("job-app");
-jobApp.jobs = new Map(jobs.map((job) => [job.id, job]));
-jobApp.jobFilters = new Set();
-document.getElementById("app")?.append(jobApp);
+app.append(jobApp);
 
