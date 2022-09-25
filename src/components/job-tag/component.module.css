@@ -18,7 +18,15 @@
   font-weight: 600;
   color: var(--color-desaturated-dark-cyan);
   box-shadow: 0 0 0 var(--tag-shadow) hsl(180 29% 50% / 25%);
+}
+
+.jobTag__button:not(:disabled) {
   cursor: pointer;
+}
+
+.jobTag__button:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .jobTag__button:not(:disabled):hover {
@@ -35,6 +43,7 @@
     transition:
       background-color 150ms ease,
       color 150ms ease,
+      opacity 150ms ease,
       box-shadow 150ms ease;
   }
 }

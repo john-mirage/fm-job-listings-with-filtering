@@ -1,47 +1,73 @@
 import jobs from "@data/jobs.json";
 
-interface HTMLElementWithJobFilters extends HTMLElement {
-  jobFilters: Set<string>;
-};
-
 class JobApi {
-  #jobFiltersSubscribers: Map<string, HTMLElementWithJobFilters> = new Map();
-  jobs: Map<number, AppData.Job> = new Map();
-  jobFilters: Set<string> = new Set();
+  [property: string]: any;
+  #jobs: Map<number, AppData.Job> = new Map();
+  #jobFilters: Set<string> = new Set();
+  #subscribers: Map<string, any> = new Map();
 
   constructor(jobs: AppData.Job[]) {
     jobs.forEach((job) => {
-      this.jobs.set(job.id, job);
+      this.#jobs.set(job.id, job);
     });
+  }
+
+  get jobs() {
+    return [...this.#jobs.values()];
+  }
+
+  get jobFilters() {
+    return [...this.#jobFilters];
   }
 
   addJobFilter(filter: string) {
-    this.jobFilters.add(filter);
-    this.dispatch();
+    this.#jobFilters.add(filter);
+    this.dispatch("jobFilters");
   }
 
   deleteJobFilter(filter: string) {
-    this.jobFilters.delete(filter);
-    this.dispatch();
+    this.#jobFilters.delete(filter);
+    this.dispatch("jobFilters");
   }
 
   clearJobFilter() {
-    this.jobFilters.clear();
-    this.dispatch();
+    this.#jobFilters.clear();
+    this.dispatch("jobFilters");
   }
 
-  dispatch() {
-    this.#jobFiltersSubscribers.forEach((jobFilterSubscriber) => {
-      jobFilterSubscriber.jobFilters = this.jobFilters;
-    });
+  dispatch(propertyName: string) {
+    if (!!this[propertyName]) {
+      const propertySubscribers = this.#subscribers.get(propertyName);
+      propertySubscribers.forEach((propertySubscriber: any) => {
+        propertySubscriber[propertyName] = this[propertyName];
+      });
+    } else {
+      throw new Error("The API do not contain the property name");
+    }
   }
 
-  subscribe(elementName: string, element: HTMLElementWithJobFilters) {
-    this.#jobFiltersSubscribers.set(elementName, element);
+  subscribe(propertyName: string, element: any) {
+    if (!!this[propertyName]) {
+      if (this.#subscribers.has(propertyName)) {
+        const propertySubscribers = this.#subscribers.get(propertyName);
+        this.#subscribers.set(propertyName, [...propertySubscribers, element]);
+      } else {
+        this.#subscribers.set(propertyName, [element]);
+      }
+    } else {
+      throw new Error("The API do not contain the property name");
+    }
   }
 
-  unsubscribe(elementName: string) {
-    this.#jobFiltersSubscribers.delete(elementName);
+  unsubscribe(propertyName: string, element: any) {
+    if (!!this[propertyName]) {
+      if (this.#subscribers.has(propertyName)) {
+        const propertySubscribers = this.#subscribers.get(propertyName);
+        propertySubscribers.filter((propertySubscriber: any) => propertySubscriber === element);
+      }
+    } else {
+      throw new Error("The API do not contain the property name");
+    }
   }
 }
 
