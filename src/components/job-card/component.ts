@@ -38,7 +38,7 @@ class JobCard extends HTMLLIElement {
   set job(newJob: AppData.Job) {
     this.#job = newJob;
     if (this.#job) {
-      this.dataset.id = String(this.#job.id);
+      this.setAttribute("name", String(this.#job.id));
       this.#logoElement.setAttribute("src", this.#job.logo);
       this.#logoElement.setAttribute("alt", `${this.#job.company} logo`);
       this.#companyElement.textContent = this.#job.company;

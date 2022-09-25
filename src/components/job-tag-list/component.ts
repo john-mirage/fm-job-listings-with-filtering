@@ -1,8 +1,10 @@
+import jobApi from "@api/job-api";
 import JobTag from "@components/job-tag/component";
 import classes from "./component.module.css";
 
 class JobTagList extends HTMLElement {
   #initialMount = true;
+  #jobFilters?: string[];
   #jobTags?: string[];
   #listElement = document.createElement("ul");
   #jobTagElement = <JobTag>document.createElement("li", { is: "job-tag" });
@@ -12,23 +14,22 @@ class JobTagList extends HTMLElement {
     this.#listElement.classList.add(classes["jobCardTags__list"]);
   }
 
+  get jobFilters(): string[] | undefined {
+    return this.#jobFilters;
+  }
+
+  set jobFilters(newJobFilters: string[] | undefined) {
+    this.#jobFilters = newJobFilters;
+    this.updateJobTags();
+  }
+
   get jobTags(): string[] | undefined {
     return this.#jobTags;
   }
 
   set jobTags(newJobTags: string[] | undefined) {
     this.#jobTags = newJobTags;
-    if (this.#jobTags) {
-      this.#listElement.replaceChildren(
-        ...this.#jobTags.map((jobTag) => {
-          const jobTagElement = <JobTag>this.#jobTagElement.cloneNode(true);
-          jobTagElement.jobTag = jobTag;
-          return jobTagElement;
-        })
-      );
-    } else {
-      this.#listElement.replaceChildren();
-    }
+    this.displayJobTags();
   }
 
   connectedCallback() {
@@ -36,6 +37,38 @@ class JobTagList extends HTMLElement {
       this.classList.add(classes["jobCardTags"]);
       this.append(this.#listElement);
       this.#initialMount = false;
+    }
+    this.jobFilters = jobApi.jobFilters;
+    jobApi.subscribe("jobFilters", this);
+  }
+
+  updateJobTags() {
+    const jobFilters = this.jobFilters;
+    const jobTags = this.jobTags;
+    if (jobFilters && jobTags) {
+      const jobTagElements = <JobTag[]>Array.from(this.#listElement.children);
+      jobTagElements.forEach((jobTagElement) => {
+        if (jobTagElement.jobTag && jobFilters.includes(jobTagElement.jobTag)) {
+          jobTagElement.setAttribute("disabled", "");
+        } else if (jobTagElement.hasAttribute("disabled")) {
+          jobTagElement.removeAttribute("disabled");
+        }
+      });
+    }
+  }
+
+  displayJobTags() {
+    const jobTags = this.jobTags;
+    if (jobTags) {
+      this.#listElement.replaceChildren(
+        ...jobTags.map((jobTag) => {
+          const jobTagElement = <JobTag>this.#jobTagElement.cloneNode(true);
+          jobTagElement.jobTag = jobTag;
+          return jobTagElement;
+        })
+      );
+    } else {
+      this.#listElement.replaceChildren();
     }
   }
 }
