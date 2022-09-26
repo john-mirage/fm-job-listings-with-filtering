@@ -6,13 +6,26 @@ class JobCardList extends HTMLElement {
   #initialMount = true;
   #listElement = document.createElement("ul");
   #jobCardElement = <JobCard>document.createElement("li", { is: "job-card" });
-  #jobCardElementCache: Map<number, JobCard> = new Map();
   #jobs?: AppData.Job[];
   #jobFilters?: string[];
+  #jobCardElements?: JobCard[];
 
   constructor() {
     super();
     this.#listElement.classList.add(classes["jobCardList__list"]);
+  }
+
+  get jobCardElements(): JobCard[] | undefined {
+    return this.#jobCardElements;
+  }
+
+  set jobCardElements(newJobCardElements: JobCard[] | undefined) {
+    this.#jobCardElements = newJobCardElements;
+    if (this.jobCardElements) {
+      this.displayJobCards();
+    } else {
+      this.#listElement.replaceChildren();
+    }
   }
 
   get jobs(): AppData.Job[] | undefined {
@@ -21,7 +34,15 @@ class JobCardList extends HTMLElement {
 
   set jobs(newJobs: AppData.Job[] | undefined) {
     this.#jobs = newJobs;
-    this.displayJobCards();
+    if (this.jobs && this.jobs.length > 0) {
+      this.jobCardElements = this.jobs.map((job) => {
+        const jobCardElement = <JobCard>this.#jobCardElement.cloneNode(true);
+        jobCardElement.job = job;
+        return jobCardElement;
+      });
+    } else {
+      this.jobCardElements = undefined;
+    }
   }
 
   get jobFilters(): string[] | undefined {
@@ -45,68 +66,44 @@ class JobCardList extends HTMLElement {
     jobApi.subscribe("jobFilters", this);
   }
 
-  insertJobCard(jobCard: JobCard, index: number) {
-    if (index <= 0) {
-      this.#listElement.prepend(jobCard);
-    } else {
-      this.#listElement.children[index - 1].after(jobCard);
-    }
+  disconnectedCallback() {
+    jobApi.unsubscribe("jobs", this);
+    jobApi.unsubscribe("jobFilters", this);
   }
 
-  getJobCard(job: AppData.Job) {
-    if (this.#jobCardElementCache.has(job.id)) {
-      return <JobCard>this.#jobCardElementCache.get(job.id);
-    } else {
-      const jobCardElement = <JobCard>this.#jobCardElement.cloneNode(true);
-      jobCardElement.job = job;
-      this.#jobCardElementCache.set(job.id, jobCardElement);
-      return jobCardElement;
-    }
-  }
-
-  handleJobCardsDeletion(jobs: AppData.Job[]) {
-    const jobCards = <JobCard[]>Array.from(this.#listElement.children);
-    jobCards.forEach((jobCard) => {
-      const jobHasNotBeenFound = !jobs.find((job) => job.id === jobCard.job.id);
-      if (jobHasNotBeenFound) jobCard.remove();
-    });
-  }
-
-  handleJobCardsAddition(jobs: AppData.Job[]) {
-    jobs.forEach((job, index) => {
-      const jobCard = <JobCard | null>this.#listElement.children.namedItem(String(job.id));
-      if (!jobCard) {
-        const newJobCard = this.getJobCard(job);
-        this.insertJobCard(newJobCard, index);
-      }
-    });
-  }
-
-  handleJobCardsClear() {
-    if (this.#listElement.children.length > 0) {
-      this.#listElement.replaceChildren();
-    }
+  checkJobCard(jobCardElement: JobCard, jobFilters: string[]) {
+    const tags = [
+      jobCardElement.job.role,
+      jobCardElement.job.level,
+      ...jobCardElement.job.languages,
+      ...jobCardElement.job.tools
+    ];
+    if (jobCardElement.job.new) tags.push("new!");
+    if (jobCardElement.job.featured) tags.push("featured");
+    return jobFilters.every((jobFilter) => tags.includes(jobFilter));
   }
 
   displayJobCards() {
     if (window.scrollY > 0) window.scroll(0, 0);
-    const jobs = this.jobs;
+    const jobCardElements = this.jobCardElements;
     const jobFilters = this.jobFilters;
-    if (jobs && jobFilters) {
-      const filteredJobs = jobs.filter((job) => {
-        const tags = [job.role, job.level, ...job.languages, ...job.tools];
-        if (job.new) tags.push("new!");
-        if (job.featured) tags.push("featured");
-        return jobFilters.every((jobFilter) => tags.includes(jobFilter));
+    if (jobCardElements && jobFilters) {
+      let previousJobCardElement: JobCard | undefined;
+      jobCardElements.forEach((jobCardElement) => {
+        const jobCardElementIsValid = this.checkJobCard(jobCardElement, jobFilters);
+        if (jobCardElementIsValid) {
+          if (!jobCardElement.isConnected) {
+            if (!previousJobCardElement) {
+              this.#listElement.prepend(jobCardElement);
+            } else {
+              previousJobCardElement.after(jobCardElement);
+            }
+          }
+          previousJobCardElement = jobCardElement;
+        } else if (jobCardElement.isConnected) {
+          jobCardElement.remove();
+        }
       });
-      if (filteredJobs.length > 0) {
-        this.handleJobCardsDeletion(filteredJobs);
-        this.handleJobCardsAddition(filteredJobs);
-      } else {
-        this.handleJobCardsClear();
-      }
-    } else {
-      this.handleJobCardsClear();
     }
   }
 }

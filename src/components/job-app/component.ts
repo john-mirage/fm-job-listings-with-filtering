@@ -45,6 +45,10 @@ class JobApp extends HTMLElement {
     this.jobFilters = jobApi.jobFilters;
     jobApi.subscribe("jobFilters", this);
   }
+
+  disconnectedCallback() {
+    jobApi.unsubscribe("jobFilters", this);
+  }
 }
 
 export default JobApp;
