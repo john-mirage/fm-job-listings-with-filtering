@@ -25,7 +25,8 @@
 }
 
 .jobTag__button:disabled {
-  opacity: 0.5;
+  background-color: var(--color-desaturated-dark-cyan);
+  color: var(--color-white);
   cursor: default;
 }
 

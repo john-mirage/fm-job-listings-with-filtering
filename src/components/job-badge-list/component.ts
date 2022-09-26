@@ -18,17 +18,7 @@ class JobBadgeList extends HTMLElement {
 
   set jobBadges(newJobBadges: string[] | undefined) {
     this.#jobBadges = newJobBadges;
-    if (this.#jobBadges) {
-      this.#listElement.replaceChildren(
-        ...this.#jobBadges.map((jobBadge) => {
-          const jobBadgeElement = <JobBadge>this.#jobBadgeElement.cloneNode(true);
-          jobBadgeElement.jobBadge = jobBadge;
-          return jobBadgeElement;
-        })
-      );
-    } else {
-      this.#listElement.replaceChildren();
-    }
+    this.handleJobBadges();
   }
 
   connectedCallback() {
@@ -36,6 +26,21 @@ class JobBadgeList extends HTMLElement {
       this.classList.add(classes["jobBadgeList"]);
       this.append(this.#listElement);
       this.#initialMount = false;
+    }
+  }
+
+  handleJobBadges() {
+    const jobBadges = this.jobBadges;
+    if (jobBadges) {
+      this.#listElement.replaceChildren(
+        ...jobBadges.map((jobBadge) => {
+          const jobBadgeElement = <JobBadge>this.#jobBadgeElement.cloneNode(true);
+          jobBadgeElement.jobBadge = jobBadge;
+          return jobBadgeElement;
+        })
+      );
+    } else {
+      this.#listElement.replaceChildren();
     }
   }
 }

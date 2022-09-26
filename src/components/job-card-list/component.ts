@@ -93,10 +93,10 @@ class JobCardList extends HTMLElement {
         const jobCardElementIsValid = this.checkJobCard(jobCardElement, jobFilters);
         if (jobCardElementIsValid) {
           if (!jobCardElement.isConnected) {
-            if (!previousJobCardElement) {
-              this.#listElement.prepend(jobCardElement);
-            } else {
+            if (previousJobCardElement) {
               previousJobCardElement.after(jobCardElement);
+            } else {
+              this.#listElement.prepend(jobCardElement);
             }
           }
           previousJobCardElement = jobCardElement;

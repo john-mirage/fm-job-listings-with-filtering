@@ -20,7 +20,7 @@ class JobTagList extends HTMLElement {
 
   set jobFilters(newJobFilters: string[] | undefined) {
     this.#jobFilters = newJobFilters;
-    this.updateJobTags();
+    this.handleJobTagStates();
   }
 
   get jobTags(): string[] | undefined {
@@ -29,7 +29,7 @@ class JobTagList extends HTMLElement {
 
   set jobTags(newJobTags: string[] | undefined) {
     this.#jobTags = newJobTags;
-    this.displayJobTags();
+    this.handleJobTags();
   }
 
   connectedCallback() {
@@ -42,7 +42,11 @@ class JobTagList extends HTMLElement {
     jobApi.subscribe("jobFilters", this);
   }
 
-  updateJobTags() {
+  disconnectedCallback() {
+    jobApi.unsubscribe("jobFilters", this);
+  }
+
+  handleJobTagStates() {
     const jobFilters = this.jobFilters;
     const jobTags = this.jobTags;
     if (jobFilters && jobTags) {
@@ -57,7 +61,7 @@ class JobTagList extends HTMLElement {
     }
   }
 
-  displayJobTags() {
+  handleJobTags() {
     const jobTags = this.jobTags;
     if (jobTags) {
       this.#listElement.replaceChildren(
