@@ -44,8 +44,8 @@
 }
 
 .jobCard__position {
-  margin-top: 0.75rem; /* 12px */
-  margin-bottom: 0.75rem; /* 12px */
+  margin-top: 0.5rem; /* 8px */
+  margin-bottom: 0.5rem; /* 8px */
   width: 100%;
 }
 
@@ -96,6 +96,25 @@
   }
 }
 
+@media screen and (min-width: 768px) {
+  .jobCard__company {
+    font-size: 1.125rem; /* 18px */
+  }
+
+  .jobCard__position {
+    margin-top: 0.25rem; /* 4px */
+    margin-bottom: 0;
+  }
+
+  .jobCard__positionLink {
+    font-size: 1.375rem; /* 22px */
+  }
+
+  .jobCard__info {
+    font-size: 1.125rem; /* 18px */
+  }
+}
+
 @media screen and (min-width: 992px) {
   .jobCard {
     display: flex;
@@ -121,21 +140,5 @@
     margin-right: 2rem;
     padding-bottom: 0;
     border-bottom: none;
-  }
-
-  .jobCard__company {
-    font-size: 1.125rem; /* 18px */
-  }
-
-  .jobCard__position {
-    margin-bottom: 0.5rem; /* 8px */
-  }
-
-  .jobCard__positionLink {
-    font-size: 1.375rem; /* 22px */
-  }
-
-  .jobCard__info {
-    font-size: 1.125rem; /* 18px */
   }
 }
