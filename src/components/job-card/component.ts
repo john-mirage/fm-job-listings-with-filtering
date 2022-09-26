@@ -9,7 +9,8 @@ class JobCard extends HTMLLIElement {
   #rowElement = document.createElement("div");
   #companyElement = document.createElement("a");
   #badgeListElement = <JobBadgeList>document.createElement("job-badge-list");
-  #positionElement = document.createElement("p");
+  #positionElement = document.createElement("div");
+  #positionLinkElement = document.createElement("a");
   #infoElement = document.createElement("p");
   #dotElement = document.createElement("span");
   #jobTagListElement = <jobTagList>document.createElement("job-tag-list");
@@ -20,10 +21,13 @@ class JobCard extends HTMLLIElement {
     this.#rowElement.classList.add(classes["jobCard__row"]);
     this.#companyElement.classList.add(classes["jobCard__company"]);
     this.#positionElement.classList.add(classes["jobCard__position"]);
+    this.#positionLinkElement.classList.add(classes["jobCard__positionLink"]);
     this.#infoElement.classList.add(classes["jobCard__info"]);
     this.#dotElement.classList.add(classes["jobCard__infoDot"]);
     this.#companyElement.setAttribute("href", "#");
+    this.#positionLinkElement.setAttribute("href", "#");
     this.#logoElement.setAttribute("draggable", "false");
+    this.#positionElement.append(this.#positionLinkElement);
     this.#rowElement.append(this.#companyElement, this.#positionElement, this.#infoElement);
   }
 
@@ -41,7 +45,7 @@ class JobCard extends HTMLLIElement {
       this.#logoElement.setAttribute("src", this.#job.logo);
       this.#logoElement.setAttribute("alt", `${this.#job.company} logo`);
       this.#companyElement.textContent = this.#job.company;
-      this.#positionElement.textContent = this.#job.position;
+      this.#positionLinkElement.textContent = this.#job.position;
       this.#infoElement.append(
         this.#job.postedAt,
         this.#dotElement.cloneNode(true),

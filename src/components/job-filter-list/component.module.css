@@ -30,6 +30,7 @@
   border: none;
   color: var(--color-dark-grayish-cyan);
   cursor: pointer;
+  outline-offset: 0.25rem; /* 4px */
 }
 
 .jobFilterList__button:not(:disabled, :active):hover {
@@ -40,5 +41,11 @@
 @media (prefers-reduced-motion: no-preference) {
   .jobFilterList__button {
     transition: color 150ms ease;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .jobFilterList {
+    padding: 1.25rem 2.5rem; /* 20px 40px */
   }
 }
