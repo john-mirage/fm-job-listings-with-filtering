@@ -30,6 +30,10 @@
   box-shadow: 0 0 0 var(--badge-shadow) hsl(180 29% 50% / 25%);
 }
 
+.jobBadge__button:disabled {
+  cursor: default;
+}
+
 .jobBadge__button:not(:disabled, :active):hover {
   --badge-shadow: 0.25rem; /* 4px */
 }

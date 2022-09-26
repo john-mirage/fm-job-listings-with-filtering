@@ -6,10 +6,26 @@ class JobBadge extends HTMLLIElement {
   #jobBadge?: string;
   #buttonElement = document.createElement("button");
 
+  static get observedAttributes() {
+    return ["disabled"];
+  }
+
   constructor() {
     super();
     this.#buttonElement.classList.add(classes["jobBadge__button"]);
     this.handleButtonClick = this.handleButtonClick.bind(this);
+  }
+
+  get disabled(): boolean {
+    return this.hasAttribute("disabled");
+  }
+
+  set disabled(isDisabled: boolean) {
+    if (isDisabled) {
+      this.setAttribute("disabled", "");
+    } else {
+      this.removeAttribute("disabled");
+    }
   }
 
   get jobBadge(): string | undefined {
@@ -41,6 +57,21 @@ class JobBadge extends HTMLLIElement {
       this.#initialMount = false;
     }
     this.#buttonElement.addEventListener("click", this.handleButtonClick);
+  }
+
+  attributeChangedCallback(name: string, _oldValue: string | null, newValue: string | null) {
+    switch (name) {
+      case "disabled":
+        const isDisabled = newValue !== null;
+        if (isDisabled) {
+          this.#buttonElement.setAttribute("disabled", "");
+        } else {
+          this.#buttonElement.removeAttribute("disabled");
+        }
+        break;
+      default:
+        throw new Error("The modified attribute is not watched");
+    }
   }
 
   disconnectedCallback() {

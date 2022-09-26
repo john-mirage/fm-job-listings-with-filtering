@@ -1,10 +1,10 @@
 import jobs from "@data/jobs.json";
 
 class JobApi {
-  [property: string]: any;
   #jobs: Map<number, AppData.Job> = new Map();
   #jobFilters: Set<string> = new Set();
-  #subscribers: Map<string, any> = new Map();
+  #jobsSubscribers: Set<any> = new Set();
+  #jobFiltersSubscribers: Set<any> = new Set();
 
   constructor(jobs: AppData.Job[]) {
     jobs.forEach((job) => {
@@ -20,6 +20,49 @@ class JobApi {
     return [...this.#jobFilters];
   }
 
+  dispatch(propertyName: string) {
+    switch (propertyName) {
+      case "jobs":
+        this.#jobsSubscribers.forEach((jobsSubscriber) => {
+          jobsSubscriber.jobs = this.jobs;
+        });
+        break;
+      case "jobFilters":
+        this.#jobFiltersSubscribers.forEach((jobFiltersSubscriber) => {
+          jobFiltersSubscriber.jobFilters = this.jobFilters;
+        });
+        break;
+      default:
+        throw new Error("The property name is not valid");
+    }
+  }
+
+  subscribe(propertyName: string, element: any) {
+    switch (propertyName) {
+      case "jobs":
+        this.#jobsSubscribers.add(element);
+        break;
+      case "jobFilters":
+        this.#jobFiltersSubscribers.add(element);
+        break;
+      default:
+        throw new Error("The property name is not valid");
+    }
+  }
+
+  unsubscribe(propertyName: string, element: any) {
+    switch (propertyName) {
+      case "jobs":
+        this.#jobsSubscribers.delete(element);
+        break;
+      case "jobFilters":
+        this.#jobFiltersSubscribers.delete(element);
+        break;
+      default:
+        throw new Error("The property name is not valid");
+    }
+  }
+
   addJobFilter(filter: string) {
     this.#jobFilters.add(filter);
     this.dispatch("jobFilters");
@@ -33,43 +76,6 @@ class JobApi {
   clearJobFilter() {
     this.#jobFilters.clear();
     this.dispatch("jobFilters");
-  }
-
-  dispatch(propertyName: string) {
-    if (!!this[propertyName]) {
-      const propertySubscribers = this.#subscribers.get(propertyName);
-      propertySubscribers.forEach((propertySubscriber: any) => {
-        propertySubscriber[propertyName] = this[propertyName];
-      });
-    } else {
-      throw new Error("The API do not contain the property name");
-    }
-  }
-
-  subscribe(propertyName: string, element: any) {
-    if (!!this[propertyName]) {
-      if (this.#subscribers.has(propertyName)) {
-        let propertySubscribers = this.#subscribers.get(propertyName);
-        propertySubscribers.push(element);
-        this.#subscribers.set(propertyName, propertySubscribers);
-      } else {
-        this.#subscribers.set(propertyName, [element]);
-      }
-    } else {
-      throw new Error("The API do not contain the property name");
-    }
-  }
-
-  unsubscribe(propertyName: string, element: any) {
-    if (!!this[propertyName]) {
-      if (this.#subscribers.has(propertyName)) {
-        const propertySubscribers = this.#subscribers.get(propertyName);
-        const filteredPropertySubscribers = propertySubscribers.filter((propertySubscriber: any) => propertySubscriber !== element);
-        this.#subscribers.set(propertyName, filteredPropertySubscribers);
-      }
-    } else {
-      throw new Error("The API do not contain the property name");
-    }
   }
 }
 
