@@ -138,6 +138,7 @@
 
 @media screen and (min-width: 992px) {
   .jobCard {
+    margin-bottom: 1.5rem; /* 24px */
     display: flex;
     flex-direction: row;
     align-items: center;
