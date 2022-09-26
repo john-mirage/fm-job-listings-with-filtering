@@ -13,6 +13,7 @@ class JobTag extends HTMLLIElement {
   constructor() {
     super();
     this.#buttonElement.classList.add(classes["jobTag__button"]);
+    this.#buttonElement.setAttribute("type", "button");
     this.handleButtonClick = this.handleButtonClick.bind(this);
   }
 

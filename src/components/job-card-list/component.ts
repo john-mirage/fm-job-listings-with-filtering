@@ -78,8 +78,8 @@ class JobCardList extends HTMLElement {
       ...jobCardElement.job.languages,
       ...jobCardElement.job.tools
     ];
-    if (jobCardElement.job.new) tags.push("new!");
-    if (jobCardElement.job.featured) tags.push("featured");
+    if (jobCardElement.job.new) tags.push("New");
+    if (jobCardElement.job.featured) tags.push("Featured");
     return jobFilters.every((jobFilter) => tags.includes(jobFilter));
   }
 

@@ -13,6 +13,7 @@ class JobBadge extends HTMLLIElement {
   constructor() {
     super();
     this.#buttonElement.classList.add(classes["jobBadge__button"]);
+    this.#buttonElement.setAttribute("type", "button");
     this.handleButtonClick = this.handleButtonClick.bind(this);
   }
 
@@ -34,15 +35,17 @@ class JobBadge extends HTMLLIElement {
 
   set jobBadge(newJobBadge: string | undefined) {
     this.#jobBadge = newJobBadge;
-    if (this.#jobBadge) {
-      if (this.#jobBadge === "new!") {
+    const jobBadge = this.jobBadge;
+    if (jobBadge) {
+      if (this.#jobBadge === "New") {
         this.#buttonElement.classList.remove(classes["jobBadge__button--black"]);
         this.#buttonElement.classList.add(classes["jobBadge__button--green"]);
+        this.#buttonElement.textContent = "new!";
       } else {
         this.#buttonElement.classList.add(classes["jobBadge__button--black"]);
         this.#buttonElement.classList.remove(classes["jobBadge__button--green"]);
+        this.#buttonElement.textContent = jobBadge;
       }
-      this.#buttonElement.textContent = this.#jobBadge;
     } else {
       this.#buttonElement.classList.remove(classes["jobBadge__button--black"]);
       this.#buttonElement.classList.remove(classes["jobBadge__button--green"]);
