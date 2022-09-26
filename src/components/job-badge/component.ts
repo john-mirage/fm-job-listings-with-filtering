@@ -35,22 +35,7 @@ class JobBadge extends HTMLLIElement {
 
   set jobBadge(newJobBadge: string | undefined) {
     this.#jobBadge = newJobBadge;
-    const jobBadge = this.jobBadge;
-    if (jobBadge) {
-      if (this.#jobBadge === "New") {
-        this.#buttonElement.classList.remove(classes["jobBadge__button--black"]);
-        this.#buttonElement.classList.add(classes["jobBadge__button--green"]);
-        this.#buttonElement.textContent = "new!";
-      } else {
-        this.#buttonElement.classList.add(classes["jobBadge__button--black"]);
-        this.#buttonElement.classList.remove(classes["jobBadge__button--green"]);
-        this.#buttonElement.textContent = jobBadge;
-      }
-    } else {
-      this.#buttonElement.classList.remove(classes["jobBadge__button--black"]);
-      this.#buttonElement.classList.remove(classes["jobBadge__button--green"]);
-      this.#buttonElement.textContent = null;
-    }
+    this.handleJobBadge();
   }
 
   connectedCallback() {
@@ -79,6 +64,25 @@ class JobBadge extends HTMLLIElement {
 
   disconnectedCallback() {
     this.#buttonElement.removeEventListener("click", this.handleButtonClick);
+  }
+
+  handleJobBadge() {
+    const jobBadge = this.jobBadge;
+    if (jobBadge) {
+      if (this.#jobBadge === "New") {
+        this.#buttonElement.classList.remove(classes["jobBadge__button--black"]);
+        this.#buttonElement.classList.add(classes["jobBadge__button--green"]);
+        this.#buttonElement.textContent = "new!";
+      } else {
+        this.#buttonElement.classList.add(classes["jobBadge__button--black"]);
+        this.#buttonElement.classList.remove(classes["jobBadge__button--green"]);
+        this.#buttonElement.textContent = jobBadge;
+      }
+    } else {
+      this.#buttonElement.classList.remove(classes["jobBadge__button--black"]);
+      this.#buttonElement.classList.remove(classes["jobBadge__button--green"]);
+      this.#buttonElement.textContent = null;
+    }
   }
 
   handleButtonClick() {

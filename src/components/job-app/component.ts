@@ -19,21 +19,13 @@ class JobApp extends HTMLElement {
     this.#containerElement.append(this.#titleElement, this.#jobCardListElement);
   }
 
-  get jobFilters(): string[] {
-    if (this.#jobFilters) {
-      return this.#jobFilters;
-    } else {
-      throw new Error("The job filters are not defined");
-    }
+  get jobFilters(): string[] | undefined {
+    return this.#jobFilters;
   }
 
-  set jobFilters(newJobFilters: string[]) {
+  set jobFilters(newJobFilters: string[] | undefined) {
     this.#jobFilters = newJobFilters;
-    if (this.jobFilters.length > 0) {
-      if (!this.#jobFilterListElement.isConnected) this.#jobCardListElement.before(this.#jobFilterListElement);
-    } else {
-      if (this.#jobFilterListElement.isConnected) this.#jobFilterListElement.remove();
-    }
+    this.handleJobFilterList();
   }
 
   connectedCallback() {
@@ -48,6 +40,17 @@ class JobApp extends HTMLElement {
 
   disconnectedCallback() {
     jobApi.unsubscribe("jobFilters", this);
+  }
+
+  handleJobFilterList() {
+    const jobFilters = this.jobFilters;
+    if (jobFilters && jobFilters.length > 0) {
+      if (!this.#jobFilterListElement.isConnected) {
+        this.#jobCardListElement.before(this.#jobFilterListElement);
+      }
+    } else if (this.#jobFilterListElement.isConnected) {
+      this.#jobFilterListElement.remove();
+    }
   }
 }
 

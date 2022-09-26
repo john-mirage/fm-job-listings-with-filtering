@@ -41,37 +41,9 @@ class JobCard extends HTMLLIElement {
 
   set job(newJob: AppData.Job) {
     this.#job = newJob;
-    if (this.#job) {
-      this.#logoElement.setAttribute("src", this.#job.logo);
-      this.#logoElement.setAttribute("alt", `${this.#job.company} logo`);
-      this.#companyElement.textContent = this.#job.company;
-      this.#positionLinkElement.textContent = this.#job.position;
-      this.#infoElement.append(
-        this.#job.postedAt,
-        this.#dotElement.cloneNode(true),
-        this.#job.contract,
-        this.#dotElement.cloneNode(true),
-        this.#job.location
-      );
-      if (this.#job.featured) this.classList.add(classes["jobCard--featured"]);
-      if (this.#job.featured || this.#job.new) {
-        let jobBadges = [];
-        if (this.#job.new) jobBadges.push("New");
-        if (this.#job.featured) jobBadges.push("Featured");
-        this.#badgeListElement.jobBadges = jobBadges;
-        this.#companyElement.after(this.#badgeListElement);
-      }
-      this.#jobTagListElement.jobTags = [
-        this.#job.role,
-        this.#job.level,
-        ...this.#job.languages,
-        ...this.#job.tools
-      ];
-    } else {
-      this.#logoElement.removeAttribute("src");
-      this.#logoElement.removeAttribute("alt");
-      this.#jobTagListElement.jobTags = undefined;
-    }
+    this.handleJobInfo();
+    this.handleJobBadges();
+    this.handleJobTags();
   }
 
   connectedCallback() {
@@ -79,6 +51,49 @@ class JobCard extends HTMLLIElement {
       this.classList.add(classes["jobCard"]);
       this.append(this.#logoElement, this.#rowElement, this.#jobTagListElement);
       this.#initialMount = false;
+    }
+  }
+
+  handleJobInfo() {
+    const job = this.job;
+    if (job) {
+      this.#logoElement.setAttribute("src", job.logo);
+      this.#logoElement.setAttribute("alt", `${job.company} logo`);
+      this.#companyElement.textContent = job.company;
+      this.#positionLinkElement.textContent = job.position;
+      this.#infoElement.append(
+        job.postedAt,
+        this.#dotElement.cloneNode(true),
+        job.contract,
+        this.#dotElement.cloneNode(true),
+        job.location
+      );
+    }
+  }
+
+  handleJobBadges() {
+    const job = this.job;
+    if (job) {
+      if (job.featured) this.classList.add(classes["jobCard--featured"]);
+      if (job.featured || job.new) {
+        let jobBadges = [];
+        if (job.new) jobBadges.push("New");
+        if (job.featured) jobBadges.push("Featured");
+        this.#badgeListElement.jobBadges = jobBadges;
+        this.#companyElement.after(this.#badgeListElement);
+      }
+    }
+  }
+
+  handleJobTags() {
+    const job = this.job;
+    if (job) {
+      this.#jobTagListElement.jobTags = [
+        job.role,
+        job.level,
+        ...job.languages,
+        ...job.tools
+      ];
     }
   }
 }
