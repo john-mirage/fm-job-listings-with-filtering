@@ -49,8 +49,9 @@ class JobApi {
   subscribe(propertyName: string, element: any) {
     if (!!this[propertyName]) {
       if (this.#subscribers.has(propertyName)) {
-        const propertySubscribers = this.#subscribers.get(propertyName);
-        this.#subscribers.set(propertyName, [...propertySubscribers, element]);
+        let propertySubscribers = this.#subscribers.get(propertyName);
+        propertySubscribers.push(element);
+        this.#subscribers.set(propertyName, propertySubscribers);
       } else {
         this.#subscribers.set(propertyName, [element]);
       }
@@ -63,7 +64,8 @@ class JobApi {
     if (!!this[propertyName]) {
       if (this.#subscribers.has(propertyName)) {
         const propertySubscribers = this.#subscribers.get(propertyName);
-        propertySubscribers.filter((propertySubscriber: any) => propertySubscriber === element);
+        const filteredPropertySubscribers = propertySubscribers.filter((propertySubscriber: any) => propertySubscriber !== element);
+        this.#subscribers.set(propertyName, filteredPropertySubscribers);
       }
     } else {
       throw new Error("The API do not contain the property name");
