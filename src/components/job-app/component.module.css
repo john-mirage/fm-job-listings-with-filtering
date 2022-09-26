@@ -21,3 +21,9 @@
   white-space: nowrap;
   border-width: 0;
 }
+
+@media screen and (min-width: 992px) {
+  .jobApp__container {
+    padding: 13.25rem 1.5rem 8rem 1.5rem;
+  }
+}
