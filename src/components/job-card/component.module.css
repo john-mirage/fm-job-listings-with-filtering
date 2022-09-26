@@ -54,7 +54,6 @@
   font-weight: 600;
   color: var(--color-very-dark-grayish-cyan);
   text-decoration: none;
-  transition: color 150ms ease;
 }
 
 .jobCard__positionLink:hover {
@@ -81,6 +80,12 @@
   height: 0.25rem; /* 4px */
   border-radius: 9999px;
   background-color: var(--color-dark-grayish-cyan);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .jobCard__positionLink {
+    transition: color 150ms ease;
+  }
 }
 
 @media screen and (min-width: 335px) {
