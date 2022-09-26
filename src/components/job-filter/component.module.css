@@ -33,6 +33,7 @@
   color: var(--color-white);
   box-shadow: 0 0 0 var(--filter-shadow) hsl(180 14% 20% / 25%);
   cursor: pointer;
+  outline-offset: 0.25rem; /* 4px */
 }
 
 .jobFilter__button:not(:disabled):hover {

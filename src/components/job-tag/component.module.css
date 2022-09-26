@@ -18,6 +18,7 @@
   font-weight: 600;
   color: var(--color-desaturated-dark-cyan);
   box-shadow: 0 0 0 var(--tag-shadow) hsl(180 29% 50% / 25%);
+  outline-offset: 0.25rem; /* 4px */
 }
 
 .jobTag__button:not(:disabled) {
