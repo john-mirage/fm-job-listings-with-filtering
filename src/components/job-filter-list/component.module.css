@@ -23,7 +23,10 @@
 
 .jobFilterList__button {
   margin-left: 1rem; /* 16px */
+  margin-right: -0.5rem; /* -8px */
   height: 2rem; /* 32px */
+  padding-left: 0.5rem; /* 8px */
+  padding-right: 0.5rem; /* 8px */
   font-size: 1rem; /* 16px */
   font-weight: 600;
   background-color: transparent;

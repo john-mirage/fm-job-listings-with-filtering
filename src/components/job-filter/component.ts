@@ -5,17 +5,18 @@ const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
 class JobFilter extends HTMLLIElement {
   #initialMount = true;
-  #jobFilter?: string;
   #buttonElement = document.createElement("button");
   #labelElement = document.createElement("span");
   #iconElement = document.createElementNS(SVG_NAMESPACE, "svg");
   #iconShapeElement = document.createElementNS(SVG_NAMESPACE, "use");
+  #jobFilter?: string;
 
   constructor() {
     super();
     this.#labelElement.classList.add(classes["jobFilter__label"]);
     this.#buttonElement.classList.add(classes["jobFilter__button"]);
     this.#iconElement.classList.add(classes["jobFilter__buttonIcon"]);
+    this.#buttonElement.setAttribute("type", "button");
     this.#iconElement.setAttribute("fill", "currentColor");
     this.#iconShapeElement.setAttribute("href", "#icon-delete");
     this.#iconElement.append(this.#iconShapeElement);
@@ -33,8 +34,10 @@ class JobFilter extends HTMLLIElement {
 
   set jobFilter(newJobFilter: string) {
     this.#jobFilter = newJobFilter;
-    this.#labelElement.textContent = this.jobFilter;
-    this.dataset.id = this.jobFilter;
+    const filterId = `${this.jobFilter.toLowerCase()}-filter`;
+    this.#labelElement.textContent = this.#jobFilter;
+    this.setAttribute("id", filterId);
+    this.#buttonElement.setAttribute("aria-labelledby", filterId);
   }
 
   connectedCallback() {

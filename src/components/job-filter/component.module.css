@@ -15,7 +15,6 @@
   font-size: 1rem; /* 16px */
   font-weight: 600;
   color: var(--color-desaturated-dark-cyan);
-  text-transform: capitalize;
 }
 
 .jobFilter__button {

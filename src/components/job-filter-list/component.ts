@@ -14,6 +14,7 @@ class JobFilterList extends HTMLElement {
     super();
     this.#listElement.classList.add(classes["jobFilterList__list"]);
     this.#buttonElement.classList.add(classes["jobFilterList__button"]);
+    this.#buttonElement.setAttribute("type", "button");
     this.#buttonElement.textContent = "Clear";
     this.handleClearButtonClick = this.handleClearButtonClick.bind(this);
   }

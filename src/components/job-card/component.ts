@@ -56,8 +56,8 @@ class JobCard extends HTMLLIElement {
       if (this.#job.featured) this.classList.add(classes["jobCard--featured"]);
       if (this.#job.featured || this.#job.new) {
         let jobBadges = [];
-        if (this.#job.new) jobBadges.push("new!");
-        if (this.#job.featured) jobBadges.push("featured");
+        if (this.#job.new) jobBadges.push("New");
+        if (this.#job.featured) jobBadges.push("Featured");
         this.#badgeListElement.jobBadges = jobBadges;
         this.#companyElement.after(this.#badgeListElement);
       }
