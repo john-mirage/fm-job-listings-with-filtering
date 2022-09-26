@@ -1,3 +1,4 @@
+import jobApi from "@api/job-api";
 import classes from "./component.module.css";
 
 class JobBadge extends HTMLLIElement {
@@ -47,13 +48,7 @@ class JobBadge extends HTMLLIElement {
   }
 
   handleButtonClick() {
-    if (this.jobBadge) {
-      const customEvent = new CustomEvent("add-job-filter", {
-        bubbles: true,
-        detail: { filter: this.jobBadge }
-      });
-      this.dispatchEvent(customEvent);
-    }
+    if (this.jobBadge) jobApi.addJobFilter(this.jobBadge);
   }
 }
 

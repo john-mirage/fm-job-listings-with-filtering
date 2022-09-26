@@ -1,13 +1,14 @@
+import jobApi from "@api/job-api";
 import JobFilter from "@components/job-filter/component";
 import classes from "./component.module.css";
 
 class JobFilterList extends HTMLElement {
   #initialMount = true;
-  #jobFilters?: Set<string>;
   #listElement = document.createElement("ul");
   #buttonElement = document.createElement("button");
-  #jobFilterElement = document.createElement("li", { is: "job-filter" });
+  #jobFilterElement = <JobFilter>document.createElement("li", { is: "job-filter" });
   #jobFilterElementCache: Map<string, JobFilter> = new Map();
+  #jobFilters?: string[] | undefined;
 
   constructor() {
     super();
@@ -17,20 +18,16 @@ class JobFilterList extends HTMLElement {
     this.handleClearButtonClick = this.handleClearButtonClick.bind(this);
   }
 
-  get jobFilters(): Set<string> {
-    if (this.#jobFilters) {
-      return this.#jobFilters;
-    } else {
-      throw new Error("The job filters are not defined");
-    }
+  get jobFilters(): string[] | undefined {
+    return this.#jobFilters;
   }
 
-  set jobFilters(newJobFilters: Set<string>) {
+  set jobFilters(newJobFilters: string[] | undefined) {
     this.#jobFilters = newJobFilters;
-    if (this.#jobFilters.size > 0) {
-      this.displayJobFilters();
+    if (this.jobFilters && this.jobFilters.length > 0) {
+      this.handleJobFilters();
     } else {
-      if (this.#listElement.children.length > 0) this.#listElement.replaceChildren();
+      this.#listElement.replaceChildren();
     }
   }
 
@@ -40,22 +37,17 @@ class JobFilterList extends HTMLElement {
       this.append(this.#listElement, this.#buttonElement);
       this.#initialMount = false;
     }
+    this.jobFilters = jobApi.jobFilters;
+    jobApi.subscribe("jobFilters", this);
     this.#buttonElement.addEventListener("click", this.handleClearButtonClick);
   }
 
   disconnectedCallback() {
+    jobApi.unsubscribe("jobFilters", this);
     this.#buttonElement.removeEventListener("click", this.handleClearButtonClick);
   }
 
-  insertJobFilter(jobFilter: JobFilter, index: number) {
-    if (index <= 0) {
-      this.#listElement.prepend(jobFilter);
-    } else {
-      this.#listElement.children[index - 1].after(jobFilter);
-    }
-  }
-
-  getJobFilter(jobFilter: string) {
+  getJobFilterElement(jobFilter: string) {
     if (this.#jobFilterElementCache.has(jobFilter)) {
       return <JobFilter>this.#jobFilterElementCache.get(jobFilter);
     } else {
@@ -66,25 +58,42 @@ class JobFilterList extends HTMLElement {
     }
   }
 
-  displayJobFilters() {
-    const jobFilterElements = <JobFilter[]>Array.from(this.#listElement.children);
+  handleDeletedJobFilters(jobFilters: string[], jobFilterElements: JobFilter[]) {
     jobFilterElements.forEach((jobFilterElement) => {
-      const jobHasNotBeenFound = !this.jobFilters.has(jobFilterElement.jobFilter);
-      if (jobHasNotBeenFound) jobFilterElement.remove();
+      const jobFilterElementIsNotValid = !jobFilters.includes(jobFilterElement.jobFilter);
+      if (jobFilterElementIsNotValid) jobFilterElement.remove();
     });
+  }
 
-    [...this.jobFilters.values()].forEach((jobFilter, index) => {
-      const jobFilterElement = <JobFilter | null>this.#listElement.querySelector(`[data-id="${jobFilter}"]`);
-      if (!jobFilterElement) {
-        const newJobFilter = this.getJobFilter(jobFilter);
-        this.insertJobFilter(newJobFilter, index);
+  handleAddedJobFilters(jobFilters: string[], jobFilterElements: JobFilter[]) {
+    let previousJobFilterElement: JobFilter | undefined;
+    jobFilters.forEach((jobFilter) => {
+      const currentJobFilterElement = jobFilterElements.find((jobFilterElement) => jobFilterElement.jobFilter === jobFilter);
+      if (!currentJobFilterElement) {
+        const newJobFilterElement = this.getJobFilterElement(jobFilter);
+        if (previousJobFilterElement) {
+          previousJobFilterElement.after(newJobFilterElement);
+        } else {
+          this.#listElement.prepend(newJobFilterElement);
+        }
+        previousJobFilterElement = newJobFilterElement;
+      } else {
+        previousJobFilterElement = currentJobFilterElement;
       }
     });
   }
 
+  handleJobFilters() {
+    const jobFilters = this.jobFilters;
+    if (jobFilters) {
+      const jobFilterElements = <JobFilter[]>Array.from(this.#listElement.children);
+      this.handleDeletedJobFilters(jobFilters, jobFilterElements);
+      this.handleAddedJobFilters(jobFilters, jobFilterElements);
+    }
+  }
+
   handleClearButtonClick() {
-    const customEvent = new CustomEvent("clear-job-filters", { bubbles: true });
-    this.dispatchEvent(customEvent);
+    jobApi.clearJobFilter();
   }
 }
 

@@ -1,3 +1,4 @@
+import jobApi from "@api/job-api";
 import classes from "./component.module.css";
 
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
@@ -50,13 +51,7 @@ class JobFilter extends HTMLLIElement {
   }
 
   handleDeleteButton() {
-    if (this.jobFilter) {
-      const customEvent = new CustomEvent("delete-job-filter", {
-        bubbles: true,
-        detail: { filter: this.jobFilter }
-      });
-      this.dispatchEvent(customEvent);
-    }
+    if (this.jobFilter) jobApi.deleteJobFilter(this.jobFilter);
   }
 }
 
