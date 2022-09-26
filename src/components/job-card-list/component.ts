@@ -66,15 +66,19 @@ class JobCardList extends HTMLElement {
   }
 
   checkJobCardElement(jobCardElement: JobCard, jobFilters: string[]) {
-    const tags = [
-      jobCardElement.job.role,
-      jobCardElement.job.level,
-      ...jobCardElement.job.languages,
-      ...jobCardElement.job.tools
-    ];
-    if (jobCardElement.job.new) tags.push("New");
-    if (jobCardElement.job.featured) tags.push("Featured");
-    return jobFilters.every((jobFilter) => tags.includes(jobFilter));
+    if (jobCardElement.job) {
+      const tags = [
+        jobCardElement.job.role,
+        jobCardElement.job.level,
+        ...jobCardElement.job.languages,
+        ...jobCardElement.job.tools
+      ];
+      if (jobCardElement.job.new) tags.push("New");
+      if (jobCardElement.job.featured) tags.push("Featured");
+      return jobFilters.every((jobFilter) => tags.includes(jobFilter));
+    } else {
+      throw new Error("The job card element has no job property");
+    }
   }
 
   insertJobCardElement(jobCardElement: JobCard, previousJobCardElement: JobCard | undefined) {
