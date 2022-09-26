@@ -1,3 +1,12 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .jobCard {
   margin-bottom: 2.5rem; /* 40px */
   position: relative;
@@ -83,6 +92,13 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  .jobCard {
+    animation-name: fadeIn;
+    animation-duration: 600ms;
+    animation-fill-mode: backwards;
+    animation-timing-function: ease;
+  }
+
   .jobCard__positionLink {
     transition: color 150ms ease;
   }
