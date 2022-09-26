@@ -4,10 +4,10 @@ import classes from "./component.module.css";
 
 class JobTagList extends HTMLElement {
   #initialMount = true;
-  #jobFilters?: string[];
-  #jobTags?: string[];
   #listElement = document.createElement("ul");
   #jobTagElement = <JobTag>document.createElement("li", { is: "job-tag" });
+  #jobFilters?: string[];
+  #jobTags?: string[];
 
   constructor() {
     super();
