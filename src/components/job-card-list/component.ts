@@ -21,11 +21,7 @@ class JobCardList extends HTMLElement {
 
   set jobCardElements(newJobCardElements: JobCard[] | undefined) {
     this.#jobCardElements = newJobCardElements;
-    if (this.jobCardElements) {
-      this.displayJobCards();
-    } else {
-      this.#listElement.replaceChildren();
-    }
+    this.handleJobCardElements();
   }
 
   get jobs(): AppData.Job[] | undefined {
@@ -34,15 +30,7 @@ class JobCardList extends HTMLElement {
 
   set jobs(newJobs: AppData.Job[] | undefined) {
     this.#jobs = newJobs;
-    if (this.jobs && this.jobs.length > 0) {
-      this.jobCardElements = this.jobs.map((job) => {
-        const jobCardElement = <JobCard>this.#jobCardElement.cloneNode(true);
-        jobCardElement.job = job;
-        return jobCardElement;
-      });
-    } else {
-      this.jobCardElements = undefined;
-    }
+    this.handleJobs();
   }
 
   get jobFilters(): string[] | undefined {
@@ -51,7 +39,7 @@ class JobCardList extends HTMLElement {
 
   set jobFilters(newJobFilters: string[] | undefined) {
     this.#jobFilters = newJobFilters;
-    this.displayJobCards();
+    this.handleJobFilters();
   }
 
   connectedCallback() {
@@ -60,8 +48,8 @@ class JobCardList extends HTMLElement {
       this.append(this.#listElement);
       this.#initialMount = false;
     }
-    this.jobs = jobApi.jobs;
     this.jobFilters = jobApi.jobFilters;
+    this.jobs = jobApi.jobs;
     jobApi.subscribe("jobs", this);
     jobApi.subscribe("jobFilters", this);
   }
@@ -71,7 +59,13 @@ class JobCardList extends HTMLElement {
     jobApi.unsubscribe("jobFilters", this);
   }
 
-  checkJobCard(jobCardElement: JobCard, jobFilters: string[]) {
+  scrollWindowToTheTop() {
+    if (window.scrollY > 0) {
+      window.scroll(0, 0)
+    };
+  }
+
+  checkJobCardElement(jobCardElement: JobCard, jobFilters: string[]) {
     const tags = [
       jobCardElement.job.role,
       jobCardElement.job.level,
@@ -83,25 +77,62 @@ class JobCardList extends HTMLElement {
     return jobFilters.every((jobFilter) => tags.includes(jobFilter));
   }
 
-  displayJobCards() {
-    if (window.scrollY > 0) window.scroll(0, 0);
-    const jobCardElements = this.jobCardElements;
+  insertJobCardElement(jobCardElement: JobCard, previousJobCardElement: JobCard | undefined) {
+    if (!jobCardElement.isConnected) {
+      if (previousJobCardElement) {
+        previousJobCardElement.after(jobCardElement);
+      } else {
+        this.#listElement.prepend(jobCardElement);
+      }
+    }
+  }
+
+  handleJobCardElements() {
     const jobFilters = this.jobFilters;
-    if (jobCardElements && jobFilters) {
+    const jobCardElements = this.jobCardElements;
+    if (jobFilters && jobCardElements && (jobCardElements.length > 0)) {
+      this.scrollWindowToTheTop();
+      if (jobFilters.length > 0) {
+        this.handleJobFilters();
+      } else {
+        this.#listElement.replaceChildren(...jobCardElements);
+      }
+    } else {
+      this.#listElement.replaceChildren();
+    }
+  }
+
+  handleJobs() {
+    const jobs = this.jobs;
+    if (jobs && jobs.length > 0) {
+      this.jobCardElements = jobs.map((job) => {
+        const jobCardElement = <JobCard>this.#jobCardElement.cloneNode(true);
+        jobCardElement.job = job;
+        return jobCardElement;
+      });
+    } else {
+      this.jobCardElements = undefined;
+    }
+  }
+
+  handleJobFilters() {
+    const jobFilters = this.jobFilters;
+    const jobCardElements = this.jobCardElements;
+    if (jobCardElements && (jobCardElements.length > 0) && jobFilters) {
+      this.scrollWindowToTheTop();
       let previousJobCardElement: JobCard | undefined;
       jobCardElements.forEach((jobCardElement) => {
-        const jobCardElementIsValid = this.checkJobCard(jobCardElement, jobFilters);
-        if (jobCardElementIsValid) {
-          if (!jobCardElement.isConnected) {
-            if (previousJobCardElement) {
-              previousJobCardElement.after(jobCardElement);
-            } else {
-              this.#listElement.prepend(jobCardElement);
-            }
+        if (jobFilters.length > 0) {
+          const jobCardElementIsValid = this.checkJobCardElement(jobCardElement, jobFilters);
+          if (jobCardElementIsValid) {
+            this.insertJobCardElement(jobCardElement, previousJobCardElement);
+            previousJobCardElement = jobCardElement;
+          } else if (jobCardElement.isConnected) {
+            jobCardElement.remove();
           }
+        } else {
+          this.insertJobCardElement(jobCardElement, previousJobCardElement);
           previousJobCardElement = jobCardElement;
-        } else if (jobCardElement.isConnected) {
-          jobCardElement.remove();
         }
       });
     }
