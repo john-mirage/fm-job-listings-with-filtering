@@ -35,11 +35,7 @@ class JobTag extends HTMLLIElement {
 
   set jobTag(newJobTag: string | undefined) {
     this.#jobTag = newJobTag;
-    if (this.#jobTag) {
-      this.#buttonElement.textContent = this.#jobTag;
-    } else {
-      this.#buttonElement.textContent = "";
-    }
+    this.handleJobTag();
   }
 
   connectedCallback() {
@@ -70,8 +66,20 @@ class JobTag extends HTMLLIElement {
     }
   }
 
+  handleJobTag() {
+    const jobTag = this.jobTag;
+    if (jobTag) {
+      this.#buttonElement.textContent = jobTag;
+    } else {
+      this.#buttonElement.textContent = "";
+    }
+  }
+
   handleButtonClick() {
-    if (this.jobTag) jobApi.addJobFilter(this.jobTag);
+    const jobTag = this.jobTag;
+    if (jobTag) {
+      jobApi.addJobFilter(jobTag);
+    }
   }
 }
 

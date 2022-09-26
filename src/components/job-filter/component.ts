@@ -24,20 +24,13 @@ class JobFilter extends HTMLLIElement {
     this.handleDeleteButton = this.handleDeleteButton.bind(this);
   }
 
-  get jobFilter(): string {
-    if (this.#jobFilter) {
-      return this.#jobFilter;
-    } else {
-      throw new Error("The job filter is not defined");
-    }
+  get jobFilter(): string | undefined {
+    return this.#jobFilter;
   }
 
-  set jobFilter(newJobFilter: string) {
+  set jobFilter(newJobFilter: string | undefined) {
     this.#jobFilter = newJobFilter;
-    const filterId = `${this.jobFilter.toLowerCase()}-filter`;
-    this.#labelElement.textContent = this.#jobFilter;
-    this.setAttribute("id", filterId);
-    this.#buttonElement.setAttribute("aria-labelledby", filterId);
+    this.handleJobFilter();
   }
 
   connectedCallback() {
@@ -51,6 +44,16 @@ class JobFilter extends HTMLLIElement {
 
   disconnectedCallback() {
     this.#buttonElement.removeEventListener("click", this.handleDeleteButton);
+  }
+
+  handleJobFilter() {
+    const jobFilter = this.jobFilter;
+    if (jobFilter) {
+      const filterId = `${jobFilter.toLowerCase()}-filter`;
+      this.#labelElement.textContent = jobFilter;
+      this.setAttribute("id", filterId);
+      this.#buttonElement.setAttribute("aria-labelledby", filterId);
+    }
   }
 
   handleDeleteButton() {

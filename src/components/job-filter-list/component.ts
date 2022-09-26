@@ -61,7 +61,7 @@ class JobFilterList extends HTMLElement {
 
   handleDeletedJobFilters(jobFilters: string[], jobFilterElements: JobFilter[]) {
     jobFilterElements.forEach((jobFilterElement) => {
-      const jobFilterElementIsNotValid = !jobFilters.includes(jobFilterElement.jobFilter);
+      const jobFilterElementIsNotValid = !jobFilters.includes(jobFilterElement.jobFilter || "");
       if (jobFilterElementIsNotValid) jobFilterElement.remove();
     });
   }

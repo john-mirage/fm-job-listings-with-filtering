@@ -31,15 +31,11 @@ class JobCard extends HTMLLIElement {
     this.#rowElement.append(this.#companyElement, this.#positionElement, this.#infoElement);
   }
 
-  get job(): AppData.Job {
-    if (this.#job) {
-      return this.#job;
-    } else {
-      throw new Error("The job is not defined");
-    }
+  get job(): AppData.Job | undefined {
+    return this.#job;
   }
 
-  set job(newJob: AppData.Job) {
+  set job(newJob: AppData.Job | undefined) {
     this.#job = newJob;
     this.handleJobInfo();
     this.handleJobBadges();
